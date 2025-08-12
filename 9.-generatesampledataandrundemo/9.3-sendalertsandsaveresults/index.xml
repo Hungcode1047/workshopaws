@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Sending Alerts and Saving Results on Deploy Hugo Website with AWS CI/CD Tools</title>
+    <link>http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.3-sendalertsandsaveresults/</link>
+    <description>Recent content in Sending Alerts and Saving Results on Deploy Hugo Website with AWS CI/CD Tools</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.3-sendalertsandsaveresults/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>

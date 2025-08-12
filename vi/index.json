@@ -1,0 +1,337 @@
+[
+{
+	"uri": "http://localhost:1313/workshopaws/vi/",
+	"title": "Giới thiệu",
+	"tags": [],
+	"description": "",
+	"content": "Tổng quan Trong bối cảnh hệ thống hạ tầng và ứng dụng ngày càng phức tạp, việc giám sát dữ liệu log để phát hiện các hành vi bất thường đóng vai trò quan trọng trong việc duy trì tính ổn định và bảo mật. Phát hiện bất thường kịp thời giúp ngăn ngừa sự cố, giảm thiểu thiệt hại và tối ưu hiệu suất vận hành.\nWorkshop này hướng dẫn bạn xây dựng một hệ thống phát hiện bất thường sử dụng thuật toán Isolation Forest trên dữ liệu log JSON theo batch. Hệ thống bao gồm các bước xử lý dữ liệu, tính toán đặc trưng nâng cao (rolling mean, rolling std, difference), huấn luyện mô hình, và phân loại mức độ bất thường. Khi phát hiện bất thường, hệ thống sẽ gửi cảnh báo realtime qua Discord webhook và lưu trữ kết quả lên AWS CloudWatch Logs và Amazon S3. Toàn bộ quy trình chạy trên môi trường local (Google Colab), đồng thời có hướng dẫn mở rộng lên hạ tầng AWS.\nWorkshop còn bao gồm phần tạo dữ liệu giả để mô phỏng luồng log thời gian thực, giúp bạn có môi trường thử nghiệm và đánh giá hiệu quả hệ thống.\nMục tiêu Sau khi hoàn thành workshop, bạn sẽ có khả năng:\nHiểu và triển khai thuật toán Isolation Forest trong phát hiện bất thường. Tiền xử lý và feature engineering cho dữ liệu log JSON (rolling mean, std, diff). Phân loại mức độ nghiêm trọng của bất thường dựa trên ngưỡng động và tĩnh. Tích hợp hệ thống với AWS CloudWatch, S3 để lưu trữ log và kết quả. Gửi cảnh báo thời gian thực qua Discord webhook. Tạo dữ liệu giả để mô phỏng dữ liệu streaming thời gian thực. Visualize kết quả phát hiện bất thường trên biểu đồ. Chuẩn bị nền tảng để triển khai quy mô lớn trên AWS nếu cần. Phạm vi Workshop tập trung vào:\nXử lý dữ liệu log JSON dạng batch và mô phỏng realtime. Thuật toán unsupervised Isolation Forest. Tích hợp dịch vụ AWS (CloudWatch, S3) và Discord để lưu trữ và cảnh báo. Thực hiện trên môi trường local (Google Colab), với hướng dẫn mở rộng AWS. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/1.-introduction/",
+	"title": "Giới Thiệu",
+	"tags": [],
+	"description": "",
+	"content": "Anomaly Detection System là một giải pháp được triển khai để giám sát dữ liệu hệ thống (như CPU usage, log ứng dụng, lưu lượng mạng) và phát hiện những hành vi bất thường một cách tự động.\nHệ thống này được thiết kế với mục tiêu giảm thiểu false positive, xử lý dữ liệu theo thời gian thực, và gửi cảnh báo tức thì thông qua các kênh như Discord, đồng thời trực quan hóa kết quả phát hiện bất thường trên dashboard.\nVới workflow hiện tại, hệ thống bao gồm các thành phần chính:\nThu thập dữ liệu đầu vào từ nhiều nguồn (ví dụ: log JSON, số liệu time series từ hạ tầng). Tiền xử lý dữ liệu và trích xuất đặc trưng (feature engineering) như rolling mean, rolling std, và các chỉ số chênh lệch. Chuẩn hóa dữ liệu để đảm bảo các feature có cùng tỷ lệ ảnh hưởng đến mô hình. Huấn luyện mô hình Isolation Forest để phát hiện điểm bất thường mà không cần dữ liệu nhãn (unsupervised learning). Gán mức độ nghiêm trọng (severity level) cho từng điểm bất thường dựa trên ngưỡng xác suất. Tích hợp AWS CloudWatch để lưu trữ log và S3 để lưu biểu đồ kết quả. Gửi cảnh báo tức thì qua Discord khi phát hiện bất thường. Hiển thị kết quả và biểu đồ giúp người dùng dễ dàng phân tích. Với việc triển khai hệ thống này, bạn có thể đạt được các lợi ích sau:\nTự động phát hiện bất thường trong dữ liệu vận hành hạ tầng và ứng dụng. Giảm thiểu chi phí giám sát bằng cách thay thế quá trình kiểm tra thủ công. Cảnh báo theo thời gian thực để xử lý sự cố ngay khi phát sinh. Dễ dàng mở rộng để hỗ trợ nhiều loại dữ liệu khác nhau (time series, log, network traffic). Tích hợp trực tiếp với AWS để quản lý, lưu trữ và phân tích dữ liệu. Trực quan hóa kết quả qua biểu đồ, giúp việc phân tích dễ dàng và trực quan. Giảm false positive nhờ bước xử lý dữ liệu và gán mức severity thông minh. Với những ưu điểm này, hệ thống phát hiện bất thường của bạn sẽ trở thành một công cụ hữu ích cho việc giám sát hạ tầng, giúp tiết kiệm thời gian, giảm thiểu rủi ro và nâng cao hiệu quả vận hành.\nCác mục con 1.1-WorkshopPurpose 1.2-EstimatedTime 1.3-TargetAudience 1.4-Prerequisites "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/1.-introduction/1.1-workshoppurpose/",
+	"title": "Mục đích Workshop",
+	"tags": [],
+	"description": "",
+	"content": "Mục đích của workshop Hệ thống Phát hiện Bất thường là giúp người tham gia hiểu và triển khai một giải pháp hoàn chỉnh để giám sát và phát hiện các hành vi bất thường trong hạ tầng hệ thống, ứng dụng và lưu lượng mạng.\nThông qua workshop này, bạn sẽ được hướng dẫn từng bước để:\nThu thập và xử lý dữ liệu từ nhiều nguồn khác nhau (log, metric, network traffic). Áp dụng các kỹ thuật unsupervised learning như Isolation Forest để phát hiện bất thường mà không cần dữ liệu nhãn. Giảm thiểu cảnh báo sai (false positives) bằng kỹ thuật tiền xử lý và phân loại mức độ nghiêm trọng. Tích hợp các dịch vụ AWS như Amazon S3, Amazon CloudWatch để lưu trữ và quản lý dữ liệu. Thiết lập cảnh báo real-time qua Discord webhook khi phát hiện bất thường. Trực quan hóa kết quả trên dashboard để phân tích dễ dàng. Mục tiêu cuối cùng là giúp bạn:\nNắm vững quy trình triển khai hệ thống giám sát thông minh. Ứng dụng kiến thức vào thực tế vận hành hệ thống. Tiết kiệm thời gian và chi phí so với phương pháp thủ công. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/1.-introduction/1.2-estimatedtime/",
+	"title": "Thời Gian Ước Tính",
+	"tags": [],
+	"description": "",
+	"content": "Thời gian thực hiện workshop Anomaly Detection với Machine Learning được ước lượng dựa trên từng bước trong workflow và độ phức tạp của các công đoạn xử lý, huấn luyện, tích hợp và kiểm thử.\nTổng thời gian hoàn thành dự kiến: 5–7 giờ, chia thành các giai đoạn chính như sau:\nGiới thiệu \u0026amp; chuẩn bị môi trường (Google Colab và AWS): 30–45 phút\n(Cài đặt thư viện cần thiết trên Google Colab, kết nối Google Drive; cấu hình AWS nếu mở rộng.)\nThu thập và tiền xử lý dữ liệu: 1 giờ\n(Đọc dữ liệu CSV từ Google Drive, xử lý thời gian, feature engineering với rolling mean/std/diff, chuẩn hóa dữ liệu.)\nHuấn luyện và tinh chỉnh mô hình Isolation Forest: 1.5 giờ\n(Khởi tạo mô hình, huấn luyện trên tập dữ liệu, dự đoán điểm bất thường, phân loại mức độ nghiêm trọng.)\nTriển khai pipeline, tích hợp AWS CloudWatch, S3 và Discord webhook: 1 giờ\n(Cấu hình client AWS, thiết lập log group và stream, gửi log lên CloudWatch, lưu kết quả lên S3, gửi cảnh báo qua Discord.)\nXây dựng dashboard trực quan hóa dữ liệu và kết quả phát hiện bất thường: 45 phút\n(Vẽ biểu đồ CPU Utilization, subcharts, biểu đồ điểm bất thường và step chart; lưu biểu đồ cục bộ và lên S3.)\nChạy demo, kiểm thử và tối ưu hiệu suất: 45 phút\n(Tạo dữ liệu giả mô phỏng, chạy pipeline phát hiện bất thường thời gian thực, kiểm tra logs và cảnh báo, điều chỉnh ngưỡng false positives.)\n⏱️ Lưu ý: Thời gian trên mang tính ước lượng và có thể thay đổi tùy kỹ năng người thực hiện và điều kiện hệ thống. Phần mở rộng AWS có thể mất thêm thời gian tùy theo kinh nghiệm cấu hình dịch vụ AWS.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/1.-introduction/1.3-target-audience/",
+	"title": "Đối Tượng Người Tham Gia",
+	"tags": [],
+	"description": "",
+	"content": "Workshop Anomaly Detection với Machine Learning hướng đến những đối tượng sau:\nKỹ sư dữ liệu (Data Engineers) và Nhà khoa học dữ liệu (Data Scientists) muốn tìm hiểu và áp dụng các thuật toán phát hiện bất thường không giám sát (unsupervised learning) trên dữ liệu thời gian thực và log hệ thống.\nKỹ sư vận hành hệ thống (DevOps/Cloud Engineers) muốn triển khai hệ thống giám sát tự động, giảm thiểu cảnh báo giả và tăng tính chính xác khi phát hiện sự cố.\nNhà phát triển phần mềm (Software Developers) quan tâm đến tích hợp các giải pháp machine learning vào pipeline xử lý log và cảnh báo.\nSinh viên, thực tập sinh và người mới bắt đầu có kiến thức cơ bản về Python, machine learning và muốn trải nghiệm thực tế xây dựng hệ thống anomaly detection.\nNhững người muốn tìm hiểu cách tích hợp các dịch vụ AWS như CloudWatch, S3 cùng công cụ gửi cảnh báo qua Discord webhook trong quy trình giám sát.\nLưu ý: Workshop yêu cầu người tham gia có kiến thức cơ bản về Python và hiểu biết sơ bộ về machine learning, đặc biệt là các kỹ thuật unsupervised learning.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/1.-introduction/1.4-prerequisites/",
+	"title": "Yêu Cầu Tiền Đề",
+	"tags": [],
+	"description": "",
+	"content": "Trước khi bắt đầu workshop, người tham gia cần chuẩn bị và có kiến thức, công cụ sau:\nKiến thức cơ bản:\nThành thạo lập trình Python. Hiểu biết cơ bản về machine learning, đặc biệt là các thuật toán unsupervised learning như Isolation Forest. Kiến thức cơ bản về xử lý và phân tích dữ liệu dạng time series, log. Môi trường phát triển:\nMáy tính cá nhân có kết nối Internet ổn định. Python 3.x đã được cài đặt. Các thư viện Python cần thiết: pandas, numpy, matplotlib, scikit-learn, joblib, boto3, requests (sẽ hướng dẫn cài đặt trong workshop). Google Colab (hoặc môi trường tương tự) để chạy mã và kết nối với Google Drive. Tài khoản AWS (khuyến nghị):\nTài khoản AWS với quyền truy cập tạo và quản lý các dịch vụ CloudWatch, S3. AWS CLI và boto3 được cấu hình để kết nối với AWS. Các công cụ bổ trợ:\nTài khoản Discord và thiết lập webhook để nhận cảnh báo. Lưu ý: Workshop sẽ hướng dẫn cách cài đặt thư viện và cấu hình cơ bản, tuy nhiên người tham gia nên có kinh nghiệm sử dụng Python và môi trường lập trình tương tự Google Colab để thuận tiện trong thực hành.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/2.-systemarchitecture/",
+	"title": "Kiến Trúc Hệ Thống",
+	"tags": [],
+	"description": "",
+	"content": "Phần này trình bày tổng quan kiến trúc hệ thống phát hiện bất thường, bao gồm các nguồn dữ liệu, quy trình xử lý, mô hình phát hiện và tích hợp với AWS cùng Discord.\nCác mục con 2.1-DataSources 2.2-DataProcessing 2.3-AnomalyDetectionModel 2.4-AWSDIscordIntegration "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/2.-systemarchitecture/2.1-datasources/",
+	"title": "Nguồn dữ liệu",
+	"tags": [],
+	"description": "",
+	"content": "Nguồn dữ liệu đóng vai trò quan trọng trong việc huấn luyện và kiểm thử hệ thống phát hiện bất thường.\nCác loại dữ liệu sử dụng Log JSON\nBao gồm thông tin thời gian, mức sử dụng CPU, bộ nhớ, và các thông số mạng.\nVí dụ: log hệ thống từ server hoặc dữ liệu mô phỏng.\nChỉ số hệ thống (System Metrics)\nCPU usage, Memory usage, Disk I/O, Network latency.\nLưu lượng mạng (Network Traffic)\nThông tin về số lượng gói tin, tốc độ truyền, địa chỉ IP nguồn và đích.\nYêu cầu định dạng dữ liệu Tất cả dữ liệu cần có timestamp chuẩn định dạng ISO 8601. Các trường dữ liệu phải được đặt tên rõ ràng, thống nhất. Dữ liệu thiếu hoặc không hợp lệ cần được lọc hoặc xử lý trước khi đưa vào mô hình. Nguồn dữ liệu trong workshop Theo bài workshop, chúng ta sẽ sử dụng file (cpu_utilization_asg_misconfiguration.csv) chứa thông tin mức sử dụng CPU.\nDữ liệu nằm tại link: https://www.kaggle.com/code/leomauro/anomaly-detection-streaming-data/input File này sẽ được mount lên Google Drive để thuận tiện cho quá trình xử lý và huấn luyện mô hình.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/2.-systemarchitecture/2.2-dataprocessing/",
+	"title": "Xử lý dữ liệu",
+	"tags": [],
+	"description": "",
+	"content": "Quá trình xử lý dữ liệu (Data Processing) là bước quan trọng giúp đảm bảo dữ liệu đầu vào của mô hình được sạch, thống nhất và tối ưu cho việc huấn luyện.\nCác bước xử lý chính Tải dữ liệu\nĐọc file cpu_utilization_asg_misconfiguration.csv được mount từ Google Drive. Xác định cấu trúc dữ liệu: các cột, kiểu dữ liệu, kích thước tập dữ liệu. Làm sạch dữ liệu\nLoại bỏ các dòng dữ liệu thiếu hoặc giá trị NaN. Chuẩn hóa kiểu dữ liệu, đặc biệt là cột timestamp về định dạng ISO 8601. Xử lý các giá trị ngoại lai không hợp lệ. Chuyển đổi dữ liệu\nĐổi tên cột cho thống nhất (ví dụ: CPUUtilization thay vì cpu). Chuyển đổi đơn vị đo nếu cần thiết (%, MB, ms). Tạo tập dữ liệu huấn luyện và kiểm thử\nChia dữ liệu thành các tập training và testing (ví dụ: 80%-20%). Đảm bảo dữ liệu được sắp xếp theo thời gian. Lưu ý Tất cả các bước xử lý phải được ghi log để phục vụ cho việc kiểm tra và tái hiện quy trình. Trong workshop, dữ liệu CPU từ file CSV sẽ là nguồn chính cho việc huấn luyện mô hình phát hiện bất thường. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/2.-systemarchitecture/2.3-anomalydetectionmodel/",
+	"title": "Mô hình phát hiện bất thường",
+	"tags": [],
+	"description": "",
+	"content": "Mô hình phát hiện bất thường (Anomaly Detection Model) là thành phần cốt lõi của hệ thống, chịu trách nhiệm phân tích dữ liệu đã được xử lý và xác định các điểm dữ liệu bất thường.\nLựa chọn mô hình Trong workshop này, chúng ta sử dụng Isolation Forest – một thuật toán học máy không giám sát (unsupervised learning) dựa trên nguyên lý cô lập (isolation) các điểm dữ liệu khác biệt so với phần lớn dữ liệu.\nNguyên lý hoạt động Isolation Forest xây dựng nhiều cây nhị phân ngẫu nhiên. Các điểm dữ liệu bất thường thường được cô lập nhanh hơn, dẫn đến chiều dài đường đi (path length) ngắn hơn trong cây. Dựa trên chiều dài đường đi trung bình, mô hình tính toán điểm bất thường (anomaly score). Quy trình huấn luyện và dự đoán Huấn luyện mô hình\nSử dụng tập dữ liệu từ file cpu_utilization_asg_misconfiguration.csv (mount từ Google Drive). Mô hình không cần nhãn vì đây là phương pháp unsupervised. Dự đoán bất thường\nÁp dụng mô hình lên dữ liệu mới hoặc dữ liệu kiểm thử. Phân loại anomaly hoặc normal dựa trên điểm bất thường so với ngưỡng đã định. Cảnh báo\nNếu phát hiện bất thường, hệ thống gửi cảnh báo qua Discord Webhook. Tham số mô hình chính n_estimators: Số lượng cây trong rừng (mặc định 100). max_samples: Số lượng mẫu dữ liệu sử dụng cho mỗi cây. contamination: Tỷ lệ dữ liệu dự kiến là bất thường (ví dụ 0.05). random_state: Hạt giống ngẫu nhiên để tái lập kết quả. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/2.-systemarchitecture/2.4-awsdiscordintegration/",
+	"title": "Tích hợp AWS và Discord",
+	"tags": [],
+	"description": "",
+	"content": "Tổng quan Thành phần AWS \u0026amp; Discord Integration chịu trách nhiệm kết nối hệ thống phát hiện bất thường với các dịch vụ AWS và nền tảng Discord, đảm bảo dữ liệu được lưu trữ, xử lý và cảnh báo theo thời gian thực.\nVai trò của AWS trong hệ thống Amazon S3: Lưu trữ dữ liệu nguồn (cpu_utilization_asg_misconfiguration.csv) và kết quả phân tích. Amazon SageMaker: Huấn luyện và triển khai mô hình Isolation Forest để phát hiện bất thường. AWS IAM: Quản lý quyền truy cập cho các dịch vụ và script. Tùy chọn: AWS CloudWatch có thể được tích hợp để lưu log hoặc theo dõi các chỉ số hệ thống. Tích hợp Discord Webhook Discord Webhook được sử dụng để gửi cảnh báo ngay lập tức đến kênh chỉ định khi phát hiện bất thường.\nQuy trình hoạt động: Phát hiện bất thường\nMô hình Isolation Forest đánh giá dữ liệu mới. Nếu dữ liệu được phân loại là bất thường, tạo thông tin cảnh báo (thời gian, giá trị CPU, điểm bất thường). Gửi cảnh báo qua Discord\nScript Python sử dụng thư viện requests để POST dữ liệu cảnh báo tới URL Webhook của Discord. Cảnh báo bao gồm: Thời gian phát hiện Giá trị CPU bất thường Điểm bất thường Mức độ cảnh báo Hiển thị trên Discord\nThông điệp hiển thị trong kênh Discord đã cấu hình, giúp nhóm vận hành xử lý nhanh chóng. Bảo mật Webhook Webhook URL được lưu trong file cấu hình .env hoặc biến môi trường, tránh hardcode trong source code. Phân quyền chặt chẽ và giới hạn người biết URL Webhook để ngăn gửi cảnh báo giả mạo. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/3.-setup/",
+	"title": "Thiết Lập Môi Trường",
+	"tags": [],
+	"description": "",
+	"content": "Phần này hướng dẫn cài đặt các thư viện cần thiết và kết nối Google Drive để chuẩn bị môi trường cho việc thực hiện workshop.\nCác mục con 3.1-InstallLibraries 3.2-ConnectGoogleDrive "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/3.-setup/3.1-installlibraries/",
+	"title": "Cài Đặt Thư Viện",
+	"tags": [],
+	"description": "",
+	"content": "Tổng quan Bước này hướng dẫn cách cài đặt các thư viện Python cần thiết cho workshop phát hiện bất thường.\nMục tiêu Cài đặt các thư viện phục vụ xử lý dữ liệu, huấn luyện mô hình và tích hợp AWS. Đảm bảo môi trường làm việc ổn định, không lỗi thiếu thư viện. Hướng dẫn Mở Google Colab hoặc môi trường Python của bạn. Chạy lệnh sau để cài đặt: !pip install awscli boto3 pandas numpy matplotlib scikit-learn joblib requests "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/3.-setup/3.2-connectgoogledrive/",
+	"title": "Kết Nối Google Drive",
+	"tags": [],
+	"description": "",
+	"content": "Phần này hướng dẫn cách kết nối Google Drive với môi trường Google Colab để truy cập và xử lý dữ liệu trong workshop.\nMục đích Việc kết nối Google Drive giúp bạn dễ dàng đọc và ghi các file dữ liệu, lưu trữ mô hình và kết quả trực tiếp trên Drive cá nhân, tránh mất dữ liệu khi ngắt kết nối phiên làm việc Colab.\nCác bước thực hiện Cụ thể quá trình này, ta sẽ vô drive và tạo một folder tên \u0026ldquo;Anomaly\u0026rdquo;. Rồi sau đấy upload data \u0026lsquo;cpu_utilization_asg_misconfiguration.csv\u0026rsquo; lên. Thành quả như ảnh sau:\nSau đó chạy code sau trên Collab:\nimport pandas as pd import numpy as np import matplotlib.pyplot as plt from sklearn.ensemble import IsolationForest from datetime import datetime from google.colab import drive drive.mount(\u0026#39;/content/drive\u0026#39;) file_path = \u0026#39;/content/drive/MyDrive/Anomaly/cpu_utilization_asg_misconfiguration.csv\u0026#39; df = pd.read_csv(file_path) df.head() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/4.-dataprocessingandfeatureengineering/",
+	"title": "Xử Lý Dữ Liệu và Kỹ Thuật Rút Trích Đặc Trưng",
+	"tags": [],
+	"description": "",
+	"content": "Phần này hướng dẫn cách tải dữ liệu thô, xử lý và tính toán các đặc trưng cần thiết cho mô hình phát hiện bất thường. Bạn sẽ học cách chuyển đổi dữ liệu thô thành các biến số có ý nghĩa, chuẩn bị cho việc huấn luyện mô hình.\nCác mục con 4.1-LoadAndTransformData 4.2-FeatureCalculation 4.3-DataNormalization "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/4.-dataprocessingandfeatureengineering/4.1-loadandtransformdata/",
+	"title": "Tải và Biến đổi Dữ liệu",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, chúng ta sẽ tiến hành tải dữ liệu từ Google Drive và thực hiện các bước biến đổi cơ bản để chuẩn bị dữ liệu cho việc phân tích và mô hình hóa.\nCác bước chính bao gồm:\nĐọc dữ liệu từ file CSV:\nSử dụng thư viện Pandas để đọc file cpu_utilization_asg_misconfiguration.csv lưu trên Google Drive.\nChuyển đổi cột timestamp:\nChuyển cột timestamp thành định dạng datetime chuẩn và đặt làm chỉ mục của DataFrame để thuận tiện cho các thao tác theo thời gian.\n# Xử lý dữ liệu thời gian df[\u0026#39;timestamp\u0026#39;] = pd.to_datetime(df[\u0026#39;timestamp\u0026#39;]) df.set_index(\u0026#39;timestamp\u0026#39;, inplace=True) df.sort_index(inplace=True) Sắp xếp dữ liệu theo thời gian:\nSắp xếp các bản ghi theo thứ tự thời gian tăng dần để đảm bảo tính liên tục và đúng trình tự.\nXử lý dữ liệu thiếu:\nLoại bỏ hoặc xử lý các dòng có giá trị bị thiếu (nếu có) để đảm bảo dữ liệu đầu vào sạch và chuẩn.\nViệc chuẩn bị dữ liệu kỹ càng giúp cho các bước tiếp theo như tính toán đặc trưng (feature engineering) và huấn luyện mô hình diễn ra hiệu quả và chính xác hơn.\nCuối cùng là hiển thị sơ lược dữ liệu:\n# Hiển thị sơ lược dữ liệu df.head() Thành quả như ảnh dưới là thành công.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/4.-dataprocessingandfeatureengineering/4.2-featurecalculation/",
+	"title": "Tính Toán Đặc Trưng",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi dữ liệu đã được tải và biến đổi, bước tiếp theo là tính toán các đặc trưng (features) giúp mô hình phát hiện bất thường hiệu quả hơn.\nCác đặc trưng chính bao gồm:\nRolling Mean (Trung bình trượt):\nTính trung bình của giá trị CPU Utilization trên cửa sổ trượt 3 điểm dữ liệu, giúp làm mượt và giảm nhiễu trong dữ liệu.\nRolling Standard Deviation (Độ lệch chuẩn trượt):\nTính độ lệch chuẩn trong cửa sổ 3 điểm, thể hiện sự biến động của dữ liệu.\nDifference (Hiệu số giữa các giá trị liên tiếp):\nTính sự chênh lệch giữa giá trị hiện tại và giá trị trước đó, giúp phát hiện những thay đổi đột ngột.\n# Thêm cột dữ liệu mean so với các dữ liệu trong quá khứ là 3 ví dụ: 1, 2, 3 thì tiếp theo sẽ là (1+2 + 3)/3 là 2 tiếp theo df[\u0026#39;rolling_mean\u0026#39;] = df[\u0026#39;value\u0026#39;].rolling(window=3, min_periods=1).mean() # Tiếp tục là standard hay còn gọi là phương sai của dữ liệu được tính là 3 df[\u0026#39;rolling_std\u0026#39;] = df[\u0026#39;value\u0026#39;].rolling(window=3, min_periods=1).std() # diff là sự khác biệt số giữa lúc sau và lúc trước ví dụ lần 1 là 10 mà lần 2 là 50 thì khác biệt là 50-10 = 40 df[\u0026#39;diff\u0026#39;] = df[\u0026#39;value\u0026#39;].diff().fillna(0) Xử lý dữ liệu thiếu:\nLoại bỏ các bản ghi chứa giá trị NaN phát sinh trong quá trình tính toán các đặc trưng để đảm bảo dữ liệu sạch. df.dropna(inplace=True) Việc tính toán các đặc trưng này giúp mô hình nắm bắt được các xu hướng và biến đổi tiềm ẩn trong dữ liệu, từ đó nâng cao hiệu quả phát hiện bất thường.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/4.-dataprocessingandfeatureengineering/4.3-datanormalization/",
+	"title": "Chuẩn Hóa Dữ Liệu",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi tính toán các đặc trưng, bước tiếp theo là chuẩn hóa dữ liệu nhằm đưa các feature về cùng thang đo, giúp mô hình học tập hiệu quả hơn và tránh bị ảnh hưởng bởi các giá trị có phạm vi quá lớn.\nPhương pháp chuẩn hóa sử dụng:\nStandardScaler từ thư viện scikit-learn. from sklearn.preprocessing import StandardScaler scaler = StandardScaler() features = scaler.fit_transform(df[[\u0026#39;value\u0026#39;, \u0026#39;rolling_mean\u0026#39;, \u0026#39;rolling_std\u0026#39;, \u0026#39;diff\u0026#39;]]) Lợi ích của việc chuẩn hóa:\nGiúp các feature có cùng tỷ lệ ảnh hưởng đến mô hình. Tăng tốc độ hội tụ và độ ổn định khi huấn luyện mô hình Isolation Forest. Giảm thiểu ảnh hưởng của các outliers không mong muốn trong quá trình học. Việc chuẩn hóa dữ liệu là một bước quan trọng để đảm bảo chất lượng đầu vào cho mô hình, từ đó nâng cao độ chính xác trong việc phát hiện bất thường.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/5.-initialdatavisualization/",
+	"title": "Trực Quan Hóa Dữ Liệu Ban Đầu",
+	"tags": [],
+	"description": "",
+	"content": "Phần này tập trung vào việc biểu diễn dữ liệu thô và các đặc trưng đã tính toán qua các biểu đồ giúp bạn dễ dàng quan sát, phân tích xu hướng và kiểm tra dữ liệu trước khi huấn luyện mô hình.\nCác mục con 5.1-PlotCPUUtilization 5.2-PlotSubcharts 5.3-SaveCharts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/5.-initialdatavisualization/5.1-plotcpuutilization/",
+	"title": "Biểu Đồ Sử Dụng CPU",
+	"tags": [],
+	"description": "",
+	"content": "Việc trực quan hóa dữ liệu là bước quan trọng giúp người dùng dễ dàng hiểu và phân tích các biến động trong hệ thống.\nỞ bước này, chúng ta sẽ vẽ biểu đồ CPU Utilization theo thời gian để quan sát xu hướng và các điểm bất thường tiềm năng.\nCác bước thực hiện:\nSử dụng thư viện matplotlib để tạo biểu đồ đường (line chart). Trục hoành (x-axis) là thời gian (timestamp). Trục tung (y-axis) là giá trị sử dụng CPU (value). Thêm tiêu đề, nhãn trục và lưới (grid) để biểu đồ rõ ràng, dễ đọc. # 🧪 Biểu diễn dữ liệu thô plt.figure(figsize=(14, 6)) plt.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;) plt.title(\u0026#39;CPU Utilization Over Time\u0026#39;) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Usage (%)\u0026#39;) plt.grid(True) plt.legend() plt.show() Thành quả: Mục đích:\nQuan sát sự thay đổi của CPU usage theo thời gian. Tìm kiếm các điểm bất thường hoặc biến động lớn trước khi áp dụng mô hình phát hiện. Việc xây dựng biểu đồ này giúp cung cấp cái nhìn trực quan về dữ liệu gốc, tạo nền tảng để thực hiện các bước phân tích tiếp theo.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/5.-initialdatavisualization/5.2-plotsubcharts/",
+	"title": "Biểu Đồ Con Chi Tiết",
+	"tags": [],
+	"description": "",
+	"content": "Ở bước này, chúng ta sẽ trực quan hóa các chỉ số đặc trưng (feature) đã được tính toán nhằm hiểu rõ hơn về các biến đổi trong dữ liệu.\nCụ thể, ba biểu đồ con sẽ được vẽ trên cùng một hình:\nCPU Utilization và Rolling Mean: Giúp quan sát xu hướng trung bình trượt của CPU. Rolling Standard Deviation: Thể hiện sự biến động dữ liệu theo thời gian. Difference (chênh lệch giá trị liên tiếp): Cho thấy mức độ thay đổi giữa các điểm dữ liệu liên tiếp. Các bước thực hiện:\nSử dụng matplotlib với subplots để tạo 3 biểu đồ con xếp chồng theo chiều dọc. Chia sẻ trục hoành (x-axis) để dễ so sánh theo thời gian. Đặt tiêu đề, nhãn trục, và legend cho từng biểu đồ. Thêm grid để biểu đồ rõ ràng hơn. Sử dụng các màu sắc và kiểu đường khác nhau để phân biệt các biến. fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 12), sharex=True) # Plot 1: Value và Rolling Mean ax1.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;, marker=\u0026#39;o\u0026#39;) ax1.plot(df.index, df[\u0026#39;rolling_mean\u0026#39;], label=\u0026#39;Rolling Mean\u0026#39;, color=\u0026#39;green\u0026#39;, linestyle=\u0026#39;--\u0026#39;) ax1.set_title(\u0026#39;CPU Utilization and Rolling Mean\u0026#39;) ax1.set_ylabel(\u0026#39;Value\u0026#39;) ax1.legend() ax1.grid(True) # Plot 2: Rolling Std ax2.plot(df.index, df[\u0026#39;rolling_std\u0026#39;], label=\u0026#39;Rolling Std\u0026#39;, color=\u0026#39;orange\u0026#39;, marker=\u0026#39;o\u0026#39;) ax2.set_title(\u0026#39;Rolling Standard Deviation\u0026#39;) ax2.set_ylabel(\u0026#39;Standard Deviation\u0026#39;) ax2.legend() ax2.grid(True) # Plot 3: Diff ax3.plot(df.index, df[\u0026#39;diff\u0026#39;], label=\u0026#39;Difference\u0026#39;, color=\u0026#39;red\u0026#39;, marker=\u0026#39;o\u0026#39;) ax3.set_title(\u0026#39;Difference (Value Diff)\u0026#39;) ax3.set_xlabel(\u0026#39;Timestamp\u0026#39;) ax3.set_ylabel(\u0026#39;Difference\u0026#39;) ax3.legend() ax3.grid(True) # Adjust layout để tránh overlap plt.tight_layout() plt.show() Mục đích:\nHiểu sâu hơn về đặc điểm dữ liệu. Giúp phát hiện các dấu hiệu bất thường tiềm năng trong các chỉ số đặc trưng. Chuẩn bị nền tảng cho việc huấn luyện mô hình phát hiện bất thường. Việc trực quan hóa chi tiết các đặc trưng giúp nâng cao độ chính xác và hiệu quả trong các bước xử lý tiếp theo.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/5.-initialdatavisualization/5.3-savecharts/",
+	"title": "Lưu Biểu Đồ",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi hoàn thành việc vẽ các biểu đồ trực quan, bước tiếp theo là lưu lại các biểu đồ này dưới dạng file hình ảnh để dễ dàng sử dụng cho báo cáo, phân tích hoặc tải lên AWS S3.\nCác bước thực hiện:\nSử dụng hàm plt.savefig() của thư viện matplotlib để lưu biểu đồ với định dạng .png. Đặt tên file rõ ràng, ví dụ: anomaly_metrics_plot.png. Đảm bảo gọi plt.close() để giải phóng bộ nhớ và tránh các vấn đề khi vẽ biểu đồ mới. File ảnh lưu cục bộ có thể được tải lên dịch vụ lưu trữ như Amazon S3 để tiện quản lý và truy cập từ xa. # Lưu biểu đồ plt.savefig(\u0026#39;anomaly_metrics_plot.png\u0026#39;) plt.close() Lưu ý:\nĐảm bảo thư mục lưu file tồn tại hoặc xử lý tạo thư mục nếu cần. Kiểm tra quyền ghi file để tránh lỗi khi lưu. Định dạng ảnh .png được ưu tiên vì chất lượng cao và phổ biến. Việc lưu biểu đồ là bước quan trọng giúp bảo quản kết quả phân tích và dễ dàng chia sẻ với các bên liên quan.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/6.-trainisolationforestmodel/",
+	"title": "Huấn Luyện Mô Hình Isolation Forest",
+	"tags": [],
+	"description": "",
+	"content": "Hướng dẫn chi tiết cách khởi tạo, huấn luyện mô hình Isolation Forest để phát hiện các điểm bất thường trên dữ liệu đã chuẩn bị. Bao gồm các bước dự đoán, phân loại mức độ nghiêm trọng và lưu trữ mô hình.\nCác mục con 6.1-InitializeAndTrainModel 6.2-PredictAnomalies 6.3-AssignSeverityLevel 6.4-SaveModelAndScaler "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/6.-trainisolationforestmodel/6.1-initializeandtrainmodel/",
+	"title": "Khởi tạo và Huấn luyện Mô hình",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, chúng ta sẽ khởi tạo mô hình Isolation Forest và tiến hành huấn luyện trên bộ dữ liệu đặc trưng đã được chuẩn hóa.\nCác bước chính:\nSử dụng IsolationForest từ thư viện sklearn.ensemble. Cấu hình các tham số quan trọng: contamination=0.2 — giả định 20% dữ liệu là bất thường. n_estimators=500 — số cây trong rừng để tăng độ chính xác. max_samples=256 hoặc nhỏ hơn, phù hợp với kích thước dữ liệu. random_state=42 — để đảm bảo tính tái lập. n_jobs=-1 — sử dụng đa lõi CPU để tăng tốc độ huấn luyện. Gọi hàm fit() với dữ liệu đặc trưng chuẩn hóa để huấn luyện mô hình. import joblib import matplotlib.pyplot as plt from sklearn.ensemble import IsolationForest # Huấn luyện IsolationForest model = IsolationForest( contamination=0.2, # Tăng để phù hợp dữ liệu nhỏ (1/5 điểm) random_state=42, n_estimators=500, max_samples=min(len(features), 256), # Giảm max_samples n_jobs=-1 ) Sau khi huấn luyện, mô hình sẽ có khả năng nhận diện các điểm bất thường dựa trên cấu trúc dữ liệu đầu vào.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/6.-trainisolationforestmodel/6.2-predictanomalies/",
+	"title": "Dự đoán Bất thường",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi mô hình Isolation Forest đã được huấn luyện, bước tiếp theo là sử dụng mô hình này để dự đoán các điểm bất thường trong dữ liệu.\nCác bước thực hiện:\nSử dụng hàm predict() để phân loại các điểm dữ liệu thành bình thường (1) hoặc bất thường (-1). Sử dụng hàm decision_function() để tính điểm bất thường (anomaly score), phản ánh mức độ xa rời của điểm dữ liệu so với tập dữ liệu bình thường. Kết hợp kết quả dự đoán và điểm bất thường để xác định và gán nhãn cho các điểm dữ liệu. Tạo thêm các cột mới trong DataFrame để lưu kết quả như anomaly_score và anomaly_confidence. df[\u0026#39;anomaly_score\u0026#39;] = model.fit_predict(features) df[\u0026#39;anomaly_confidence\u0026#39;] = model.decision_function(features) Việc dự đoán này giúp phát hiện các sự kiện hoặc điểm dữ liệu có hành vi bất thường, từ đó hỗ trợ giám sát và cảnh báo hiệu quả hơn.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/6.-trainisolationforestmodel/6.3-assignseveritylevel/",
+	"title": "Gán Mức Độ Nghiêm Trọng",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi dự đoán điểm bất thường, bước tiếp theo là gán mức độ nghiêm trọng (severity level) cho từng điểm dựa trên giá trị điểm bất thường (anomaly score).\nPhương pháp gán mức độ:\nXác định các ngưỡng (threshold) để phân loại mức độ cảnh báo, ví dụ: critical (nghiêm trọng): điểm thấp hơn -0.15 heavy warning (cảnh báo nặng): điểm từ -0.15 đến dưới -0.12 warning (cảnh báo): điểm từ -0.12 đến dưới -0.1 normal (bình thường): điểm trên hoặc bằng -0.1 # Phân loại mức độ cảnh báo (ngưỡng nhạy hơn) def classify_level(score): if score \u0026lt; -0.15: return \u0026#34;critical\u0026#34; elif score \u0026lt; -0.12: return \u0026#34;heavy warning\u0026#34; elif score \u0026lt; -0.1: return \u0026#34;warning\u0026#34; else: return \u0026#34;normal\u0026#34; df[\u0026#39;level\u0026#39;] = df[\u0026#39;anomaly_confidence\u0026#39;].apply(classify_level) df[\u0026#39;is_anomaly\u0026#39;] = df[\u0026#39;level\u0026#39;] != \u0026#34;normal\u0026#34; Tạo hàm phân loại mức độ dựa trên anomaly score và áp dụng lên cột anomaly_confidence. Thêm cột level trong DataFrame để lưu thông tin mức độ. Thêm cột is_anomaly để đánh dấu các điểm bất thường (có mức độ khác normal). Việc gán mức độ giúp phân loại các cảnh báo theo mức ưu tiên xử lý, tăng hiệu quả quản lý sự cố.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/6.-trainisolationforestmodel/6.4-savemodelandscaler/",
+	"title": "Lưu Mô Hình và Bộ Chuẩn Hóa",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi huấn luyện và gán mức độ nghiêm trọng cho dữ liệu, bước quan trọng tiếp theo là lưu mô hình Isolation Forest và bộ chuẩn hóa (scaler) để sử dụng cho các bước tiếp theo hoặc triển khai thực tế.\nCác bước thực hiện:\nSử dụng thư viện joblib để lưu mô hình và scaler dưới dạng file .pkl. Đặt tên file phù hợp, ví dụ: anomaly_model.pkl cho mô hình, scaler.pkl cho bộ chuẩn hóa. Việc lưu mô hình giúp bạn có thể tải lại và sử dụng mà không cần huấn luyện lại, tiết kiệm thời gian và tài nguyên. Đảm bảo các file này được lưu ở vị trí dễ truy cập hoặc upload lên dịch vụ lưu trữ (ví dụ Amazon S3). # Save model joblib.dump(model, \u0026#39;anomaly_model.pkl\u0026#39;) joblib.dump(scaler, \u0026#39;scaler.pkl\u0026#39;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/7.-visualizeanomalydetectionresults/",
+	"title": "Trực Quan Hóa Kết Quả Phát Hiện Bất Thường",
+	"tags": [],
+	"description": "",
+	"content": "Phần này hướng dẫn cách biểu diễn kết quả phát hiện bất thường trên biểu đồ, giúp bạn dễ dàng đánh giá và phân tích các điểm bất thường và mức độ nghiêm trọng của chúng theo thời gian.\nCác mục con 7.1-PlotChartsWithAnomalies 7.2-PlotStepChart 7.3-SaveCharts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/7.-visualizeanomalydetectionresults/7.1-plotchartswithanomalies/",
+	"title": "Vẽ Biểu Đồ với Các Điểm Bất Thường",
+	"tags": [],
+	"description": "",
+	"content": "Bước này tập trung vào việc trực quan hóa kết quả phát hiện bất thường trên biểu đồ, giúp người dùng dễ dàng nhận diện các điểm bất thường cùng với mức độ nghiêm trọng của chúng.\nNội dung thực hiện:\nVẽ biểu đồ đường thể hiện giá trị CPU Utilization theo thời gian. Đánh dấu các điểm bất thường bằng các dấu \u0026ldquo;x\u0026rdquo; với màu sắc thể hiện mức độ cảnh báo: warning (cảnh báo): màu cam. heavy warning (cảnh báo nghiêm trọng): màu đỏ. critical (nguy cấp): màu tím. Thêm chú thích (legend) để người dùng dễ dàng phân biệt các mức độ. Tùy chỉnh kích thước, màu sắc, và kiểu marker để biểu đồ rõ ràng và trực quan hơn. Kích thước marker lớn giúp các điểm bất thường nổi bật trên biểu đồ. Code vẽ biểu đồ:\nimport matplotlib.pyplot as plt # Vẽ biểu đồ plt.figure(figsize=(12, 6)) plt.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;) # Dùng dấu X to cho anomaly, màu theo mức độ colors = {\u0026#39;warning\u0026#39;: \u0026#39;orange\u0026#39;, \u0026#39;heavy warning\u0026#39;: \u0026#39;red\u0026#39;, \u0026#39;critical\u0026#39;: \u0026#39;purple\u0026#39;} for level, color in colors.items(): subset = df[df[\u0026#39;level\u0026#39;] == level] if not subset.empty: plt.scatter( subset.index, subset[\u0026#39;value\u0026#39;], color=color, marker=\u0026#39;x\u0026#39;, s=120, label=level ) plt.title(\u0026#39;Phát hiện bất thường với các mức độ\u0026#39;) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Utilization (%)\u0026#39;) plt.legend() plt.grid(True) plt.tight_layout() plt.show() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/7.-visualizeanomalydetectionresults/7.2-plotstepchart/",
+	"title": "Vẽ Biểu Đồ Bậc Thang Mức Độ Bất Thường",
+	"tags": [],
+	"description": "",
+	"content": "Trong bước này, ta sẽ tạo biểu đồ bậc thang (step chart) để trực quan hóa mức độ bất thường theo thời gian. Biểu đồ này giúp theo dõi sự thay đổi của các mức cảnh báo một cách rõ ràng và dễ hiểu.\nNội dung thực hiện:\nSử dụng hàm plt.step() của matplotlib để vẽ biểu đồ bậc thang với trục x là thời gian, trục y là mức độ bất thường (level). Tùy chỉnh biểu đồ để có tiêu đề, nhãn trục và lưới dễ quan sát. Biểu đồ giúp thể hiện sự chuyển đổi giữa các mức độ cảnh báo như normal, warning, heavy warning, và critical. Sử dụng kiểu đường bậc thang (where='post') để đánh dấu chính xác mức độ tại mỗi thời điểm. Code:\nimport matplotlib.pyplot as plt plt.figure(figsize=(10, 4)) plt.step(df.index, df[\u0026#39;level\u0026#39;], where=\u0026#39;post\u0026#39;, label=\u0026#39;Level\u0026#39;, linewidth=2) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;Severity Level\u0026#39;) plt.title(\u0026#39;Biểu đồ bậc thang mức độ bất thường\u0026#39;) plt.grid(True, linestyle=\u0026#39;--\u0026#39;, alpha=0.5) plt.legend() plt.tight_layout() plt.show() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/7.-visualizeanomalydetectionresults/7.3-savecharts/",
+	"title": "Lưu Biểu Đồ",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi vẽ các biểu đồ trực quan, bước tiếp theo là lưu các biểu đồ này thành file ảnh để phục vụ cho việc báo cáo, phân tích và lưu trữ.\nNội dung thực hiện:\nSử dụng phương thức plt.savefig() để lưu biểu đồ dưới định dạng PNG. Đảm bảo gọi plt.close() sau khi lưu để giải phóng bộ nhớ và tránh bị chồng chéo biểu đồ khi vẽ tiếp. Các file biểu đồ nên đặt tên rõ ràng, ví dụ: anomaly_metrics_plot.png cho biểu đồ các chỉ số ban đầu. anomaly_levels_plot.png cho biểu đồ điểm bất thường theo mức độ. anomaly_step_chart.png cho biểu đồ bậc thang mức độ bất thường. Các file ảnh này có thể được upload lên AWS S3 hoặc lưu tại thư mục dự án tùy theo yêu cầu triển khai. Code:\n# Lưu biểu đồ chỉ số plt.savefig(\u0026#39;anomaly_metrics_plot.png\u0026#39;) plt.close() # Lưu biểu đồ mức độ bất thường plt.savefig(\u0026#39;anomaly_levels_plot.png\u0026#39;) plt.close() # Lưu biểu đồ bậc thang plt.savefig(\u0026#39;anomaly_step_chart.png\u0026#39;) plt.close() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/8.-awsanddiscordintegration/",
+	"title": "Tích Hợp AWS và Discord",
+	"tags": [],
+	"description": "",
+	"content": "Hướng dẫn thiết lập và cấu hình các dịch vụ AWS như CloudWatch, S3 và tích hợp hệ thống cảnh báo qua Discord để giám sát và phản hồi bất thường trong thời gian thực.\nCác mục con 8.1-ConfigureAWSClients 8.2-SetupCloudWatch 8.3-SendLogsAndAlerts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/8.-awsanddiscordintegration/8.1-configureawsclients/",
+	"title": "Cấu Hình AWS Clients",
+	"tags": [],
+	"description": "",
+	"content": "Bước đầu tiên trong việc tích hợp hệ thống với các dịch vụ AWS là cấu hình các client AWS để tương tác với CloudWatch Logs và Amazon S3.\nNội dung chính:\nKhởi tạo boto3 client cho CloudWatch Logs và S3 với các tham số: region_name: Vùng AWS (ví dụ: ap-southeast-1). aws_access_key_id và aws_secret_access_key: Khóa truy cập AWS, đảm bảo bảo mật. Client CloudWatch Logs sẽ được sử dụng để tạo log group, log stream, và gửi log bất thường. Client S3 sẽ dùng để upload file kết quả và biểu đồ lên bucket. Ví dụ code:\nimport boto3 AWS_REGION = \u0026#34;ap-southeast-1\u0026#34; AWS_ACCESS_KEY_ID = \u0026#34;your_access_key\u0026#34; AWS_SECRET_ACCESS_KEY = \u0026#34;your_secret_key\u0026#34; #Acess_key và sectret key sẽ nằm ở trong IAM =\u0026gt; User =\u0026gt; Security credentials =\u0026gt; Access keys =\u0026gt; create access key # Khởi tạo client CloudWatch Logs logs_client = boto3.client( \u0026#39;logs\u0026#39;, region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY ) # Khởi tạo client S3 s3_client = boto3.client( \u0026#39;s3\u0026#39;, region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY ) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/8.-awsanddiscordintegration/8.2-setupcloudwatch/",
+	"title": "Thiết Lập CloudWatch",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi đã cấu hình client AWS, bước tiếp theo là thiết lập CloudWatch Logs để lưu trữ và quản lý các log phát hiện bất thường.\nNội dung chính:\nTạo Log Group nếu chưa tồn tại (ví dụ: AnomalyDetectionLogs). Tạo Log Stream trong Log Group (ví dụ: DemoStream). Xử lý ngoại lệ khi log group hoặc stream đã tồn tại để tránh lỗi. Log group và log stream giúp tổ chức và quản lý log theo từng luồng và dịch vụ. Ví dụ code:\ndef setup_cloudwatch(logs_client, log_group_name, log_stream_name): try: logs_client.create_log_group(logGroupName=log_group_name) print(f\u0026#34;Tạo Log Group: {log_group_name}\u0026#34;) except logs_client.exceptions.ResourceAlreadyExistsException: print(f\u0026#34;Log Group {log_group_name} đã tồn tại.\u0026#34;) try: logs_client.create_log_stream(logGroupName=log_group_name, logStreamName=log_stream_name) print(f\u0026#34;Tạo Log Stream: {log_stream_name}\u0026#34;) except logs_client.exceptions.ResourceAlreadyExistsException: print(f\u0026#34;Log Stream {log_stream_name} đã tồn tại.\u0026#34;) sử dụng hàm LOG_GROUP_NAME = \u0026#34;AnomalyDetectionLogs\u0026#34; LOG_STREAM_NAME = \u0026#34;DemoStream\u0026#34; setup_cloudwatch(logs_client, LOG_GROUP_NAME, LOG_STREAM_NAME) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/8.-awsanddiscordintegration/8.3-sendlogsandalerts/",
+	"title": "Gửi Log và Cảnh Báo",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi đã thiết lập CloudWatch và kết nối Discord webhook, bước tiếp theo là gửi log bất thường lên CloudWatch và gửi cảnh báo real-time qua Discord khi phát hiện anomaly.\nGửi log lên CloudWatch Log được đóng gói dưới dạng JSON, bao gồm các thông tin như timestamp, cpu_usage, anomaly_score, level. Cần quản lý sequenceToken của log stream để đảm bảo log được gửi đúng thứ tự. Xử lý chuyển đổi kiểu dữ liệu (ví dụ: numpy float, bool) sang kiểu Python gốc trước khi gửi. Ví dụ code gửi log:\ndef send_log_to_cloudwatch(logs_client, log_group_name, log_stream_name, message): try: # Chuẩn bị message (chuyển các kiểu dữ liệu đặc biệt) message = message.copy() if isinstance(message.get(\u0026#39;anomaly\u0026#39;), np.bool_): message[\u0026#39;anomaly\u0026#39;] = bool(message[\u0026#39;anomaly\u0026#39;]) if isinstance(message.get(\u0026#39;anomaly_score\u0026#39;), np.floating): message[\u0026#39;anomaly_score\u0026#39;] = float(message[\u0026#39;anomaly_score\u0026#39;]) # Lấy sequenceToken mới nhất streams = logs_client.describe_log_streams(logGroupName=log_group_name, logStreamNamePrefix=log_stream_name) upload_token = streams[\u0026#39;logStreams\u0026#39;][0].get(\u0026#39;uploadSequenceToken\u0026#39;, None) log_event = { \u0026#39;logGroupName\u0026#39;: log_group_name, \u0026#39;logStreamName\u0026#39;: log_stream_name, \u0026#39;logEvents\u0026#39;: [{ \u0026#39;timestamp\u0026#39;: int(time.time() * 1000), \u0026#39;message\u0026#39;: json.dumps(message) }] } if upload_token: log_event[\u0026#39;sequenceToken\u0026#39;] = upload_token response = logs_client.put_log_events(**log_event) print(\u0026#34;Đã gửi log lên CloudWatch.\u0026#34;) return response except Exception as e: print(f\u0026#34;Lỗi gửi log CloudWatch: {e}\u0026#34;) CloudWatch =\u0026gt; Log groups =\u0026gt; AnomalyDetectionLogs =\u0026gt; DemoStream Gửi cảnh báo qua Discord Sử dụng Discord Webhook URL.\nGửi message bao gồm thời gian, mức độ cảnh báo, giá trị đo và điểm anomaly.\nXử lý lỗi kết nối hoặc phản hồi không thành công.\nVí dụ code gửi alert:\ndef send_discord_alert(webhook_url, log_data, level): try: level_names = { 1: \u0026#34;⚠️ Cảnh báo\u0026#34;, 2: \u0026#34;⚠️⚠️ Cảnh báo nghiêm trọng\u0026#34;, 3: \u0026#34;🔥 Nguy cấp\u0026#34; } severity = level_names.get(level, \u0026#34;ℹ️ Thông tin\u0026#34;) message = ( f\u0026#34;{severity} - Phát hiện bất thường!\\n\u0026#34; f\u0026#34;Thời gian: {log_data[\u0026#39;timestamp\u0026#39;]}\\n\u0026#34; f\u0026#34;CPU Usage: {log_data[\u0026#39;cpu_usage\u0026#39;]:.2f}%\\n\u0026#34; f\u0026#34;Điểm bất thường: {log_data[\u0026#39;anomaly_score\u0026#39;]:.4f}\\n\u0026#34; ) response = requests.post(webhook_url, json={\u0026#34;content\u0026#34;: message}) response.raise_for_status() print(\u0026#34;Đã gửi cảnh báo qua Discord.\u0026#34;) except Exception as e: print(f\u0026#34;Lỗi gửi cảnh báo Discord: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/9.-generatesampledataandrundemo/",
+	"title": "Tạo Dữ Liệu Mẫu và Chạy Demo",
+	"tags": [],
+	"description": "",
+	"content": "Phần này tập trung vào việc tạo dữ liệu giả mô phỏng luồng dữ liệu thời gian thực, xử lý và phát hiện bất thường trên dữ liệu mẫu, đồng thời lưu trữ và trực quan hóa kết quả.\nCác mục con 9.1-GenerateSampleData 9.2-ProcessSampleData 9.3-SendAlertsAndSaveResults 9.4-PlotAndSaveChartsToS3 "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/9.-generatesampledataandrundemo/9.1-generatesampledata/",
+	"title": "Tạo Dữ liệu Giả (Fake Logs)",
+	"tags": [],
+	"description": "",
+	"content": "Để mô phỏng luồng dữ liệu thời gian thực phục vụ cho việc demo và kiểm thử hệ thống phát hiện bất thường, ta cần tạo dữ liệu giả (fake logs).\nDữ liệu giả bao gồm các trường quan trọng như timestamp, cpu_usage, cùng với các đặc trưng phụ trợ như memory_usage, network_latency để tăng tính thực tế.\nPhương pháp tạo dữ liệu giả: Giá trị cpu_usage dao động ngẫu nhiên trong khoảng 50% đến 80%. Có khoảng 10% xác suất tạo spike (đột biến tăng cao, ví dụ 90-100%) hoặc drop (giảm mạnh, ví dụ 10-30%) để mô phỏng anomaly. Các giá trị memory_usage và network_latency được tạo ngẫu nhiên nhưng không dùng cho mô hình. timestamp được tăng dần từng bước theo khoảng thời gian cố định (ví dụ 1 phút). Ví dụ code tạo dữ liệu giả: import random from datetime import datetime, timedelta def generate_fake_log(prev_timestamp=None): # Tính timestamp mới, nếu không có thì dùng giờ hiện tại if prev_timestamp is None: timestamp = datetime.now() else: timestamp = prev_timestamp + timedelta(minutes=1) # Tạo cpu_usage với xác suất spike hoặc drop base_cpu = random.uniform(50, 80) anomaly_chance = random.random() if anomaly_chance \u0026lt; 0.05: # 5% spike cao cpu_usage = random.uniform(90, 100) elif anomaly_chance \u0026lt; 0.10: # 5% drop thấp cpu_usage = random.uniform(10, 30) else: cpu_usage = base_cpu # Tạo các chỉ số phụ trợ memory_usage = random.uniform(40, 90) network_latency = random.uniform(10, 50) log_entry = { \u0026#34;timestamp\u0026#34;: timestamp.strftime(\u0026#34;%Y-%m-%d %H:%M:%S\u0026#34;), \u0026#34;cpu_usage\u0026#34;: cpu_usage, \u0026#34;memory_usage\u0026#34;: memory_usage, \u0026#34;network_latency\u0026#34;: network_latency, } return log_entry, timestamp "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/9.-generatesampledataandrundemo/9.2-processsampledata/",
+	"title": "Xử lý Dữ liệu Mẫu (Sample Data)",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi tạo dữ liệu giả (fake logs), bước tiếp theo là xử lý dữ liệu này để chuẩn bị cho việc phát hiện bất thường.\nCác bước xử lý dữ liệu mẫu: Tính toán các đặc trưng (feature engineering) tương tự dữ liệu thật:\nRolling Mean: Trung bình trượt của cpu_usage với cửa sổ 3 điểm dữ liệu. Rolling Standard Deviation: Độ lệch chuẩn trượt với cửa sổ 3 điểm. Difference: Hiệu số giữa giá trị hiện tại và giá trị trước đó. Chuẩn hóa dữ liệu (Normalization):\nSử dụng scaler đã được huấn luyện (ví dụ StandardScaler) để chuẩn hóa các đặc trưng nhằm đảm bảo mô hình làm việc ổn định. Dự đoán bất thường (Anomaly Prediction):\nÁp dụng mô hình Isolation Forest đã huấn luyện để tính điểm anomaly score và phân loại xem điểm dữ liệu có phải bất thường hay không. Phân loại mức độ cảnh báo dựa trên điểm anomaly score với các ngưỡng động được tính toán trước đó.\nVí dụ code xử lý một batch dữ liệu mẫu: import pandas as pd def process_sample_data(sample_logs, scaler, model): # Chuyển list dict thành DataFrame df = pd.DataFrame(sample_logs) # Chuyển timestamp sang datetime df[\u0026#39;timestamp\u0026#39;] = pd.to_datetime(df[\u0026#39;timestamp\u0026#39;]) # Tính rolling features df[\u0026#39;rolling_mean\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].rolling(window=3, min_periods=1).mean() df[\u0026#39;rolling_std\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].rolling(window=3, min_periods=1).std().fillna(0) df[\u0026#39;diff\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].diff().fillna(0) # Chuẩn hóa features = scaler.transform(df[[\u0026#39;cpu_usage\u0026#39;, \u0026#39;rolling_mean\u0026#39;, \u0026#39;rolling_std\u0026#39;, \u0026#39;diff\u0026#39;]]) # Dự đoán anomaly anomaly_scores = model.decision_function(features) predictions = model.predict(features) # -1 là anomaly, 1 là normal df[\u0026#39;anomaly_score\u0026#39;] = anomaly_scores df[\u0026#39;anomaly\u0026#39;] = predictions == -1 # Phân loại mức độ cảnh báo dựa trên ngưỡng (cần truyền threshold vào hàm hoặc định nghĩa trước) def classify_level(score, thresholds): if score \u0026lt; thresholds[\u0026#39;critical\u0026#39;]: return \u0026#39;critical\u0026#39; elif score \u0026lt; thresholds[\u0026#39;heavy_warning\u0026#39;]: return \u0026#39;heavy warning\u0026#39; elif score \u0026lt; thresholds[\u0026#39;warning\u0026#39;]: return \u0026#39;warning\u0026#39; else: return \u0026#39;normal\u0026#39; # Giả sử thresholds là dict với keys: \u0026#39;critical\u0026#39;, \u0026#39;heavy_warning\u0026#39;, \u0026#39;warning\u0026#39; thresholds = { \u0026#39;critical\u0026#39;: -0.15, \u0026#39;heavy_warning\u0026#39;: -0.12, \u0026#39;warning\u0026#39;: -0.1 } df[\u0026#39;level\u0026#39;] = df[\u0026#39;anomaly_score\u0026#39;].apply(lambda x: classify_level(x, thresholds)) return df "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/9.-generatesampledataandrundemo/9.3-sendalertsandsaveresults/",
+	"title": "Gửi Cảnh Báo và Lưu Kết Quả",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi xử lý dữ liệu mẫu và dự đoán bất thường, bước tiếp theo là gửi cảnh báo đến các hệ thống giám sát và lưu kết quả vào kho lưu trữ để phục vụ phân tích và theo dõi.\nCác bước thực hiện: Gửi cảnh báo qua Discord\nSử dụng webhook URL để gửi thông báo trực tiếp tới kênh Discord khi phát hiện điểm bất thường với mức độ nghiêm trọng từ warning trở lên. Nội dung cảnh báo bao gồm: thời gian, mức sử dụng CPU, điểm anomaly score, và mức độ cảnh báo.\nGửi log lên AWS CloudWatch\nGửi log chi tiết của điểm bất thường (timestamp, CPU usage, anomaly score, level) lên CloudWatch Logs để tiện theo dõi và truy vết.\nLưu kết quả vào Amazon S3\nXuất kết quả dự đoán dưới dạng file CSV và upload lên bucket S3 đã cấu hình, đồng thời lưu các biểu đồ trực quan hóa để phục vụ báo cáo và phân tích.\nVí dụ code: import requests import boto3 import json import io def send_discord_alert(webhook_url, log_data, level): level_names = { \u0026#39;warning\u0026#39;: \u0026#34;⚠️ Cảnh báo\u0026#34;, \u0026#39;heavy warning\u0026#39;: \u0026#34;⚠️⚠️ Cảnh báo nghiêm trọng\u0026#34;, \u0026#39;critical\u0026#39;: \u0026#34;🔥 Nguy cấp\u0026#34; } severity = level_names.get(level, \u0026#34;ℹ️ Thông tin\u0026#34;) message = ( f\u0026#34;{severity} - Phát hiện bất thường!\\n\u0026#34; f\u0026#34;Thời gian: {log_data[\u0026#39;timestamp\u0026#39;]}\\n\u0026#34; f\u0026#34;CPU Usage: {log_data[\u0026#39;cpu_usage\u0026#39;]:.2f}%\\n\u0026#34; f\u0026#34;Điểm bất thường: {log_data[\u0026#39;anomaly_score\u0026#39;]:.4f}\\n\u0026#34; ) try: response = requests.post(webhook_url, json={\u0026#34;content\u0026#34;: message}) response.raise_for_status() print(\u0026#34;Đã gửi cảnh báo qua Discord.\u0026#34;) except Exception as e: print(f\u0026#34;Lỗi gửi Discord: {e}\u0026#34;) def send_log_to_cloudwatch(client, log_group, log_stream, message): try: streams = client.describe_log_streams(logGroupName=log_group, logStreamNamePrefix=log_stream) upload_token = streams[\u0026#39;logStreams\u0026#39;][0].get(\u0026#39;uploadSequenceToken\u0026#39;, None) log_event = { \u0026#39;logGroupName\u0026#39;: log_group, \u0026#39;logStreamName\u0026#39;: log_stream, \u0026#39;logEvents\u0026#39;: [ { \u0026#39;timestamp\u0026#39;: int(pd.Timestamp.now().timestamp() * 1000), \u0026#39;message\u0026#39;: json.dumps(message) } ] } if upload_token: log_event[\u0026#39;sequenceToken\u0026#39;] = upload_token response = client.put_log_events(**log_event) print(\u0026#34;Đã gửi log lên CloudWatch.\u0026#34;) except Exception as e: print(f\u0026#34;Lỗi gửi CloudWatch: {e}\u0026#34;) def save_results_to_s3(s3_client, bucket_name, df_results, filename_csv, filename_plot, plot_path): try: csv_buffer = io.StringIO() df_results.to_csv(csv_buffer, index=False) s3_client.put_object(Bucket=bucket_name, Key=filename_csv, Body=csv_buffer.getvalue()) print(f\u0026#34;Đã lưu kết quả CSV lên s3://{bucket_name}/{filename_csv}\u0026#34;) with open(plot_path, \u0026#34;rb\u0026#34;) as f: s3_client.put_object(Bucket=bucket_name, Key=filename_plot, Body=f.read()) print(f\u0026#34;Đã lưu biểu đồ lên s3://{bucket_name}/{filename_plot}\u0026#34;) except Exception as e: print(f\u0026#34;Lỗi lưu kết quả lên S3: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/9.-generatesampledataandrundemo/9.4-plotandsavechartstos3/",
+	"title": "Vẽ Biểu Đồ và Lưu Lên S3",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi xử lý dữ liệu mẫu và dự đoán bất thường, việc trực quan hóa kết quả thông qua các biểu đồ giúp người vận hành dễ dàng phân tích và đưa ra quyết định.\nCác bước thực hiện: Vẽ biểu đồ CPU Utilization có đánh dấu điểm bất thường\nSử dụng matplotlib để tạo biểu đồ thể hiện giá trị CPU Utilization theo thời gian, đồng thời đánh dấu các điểm bất thường với màu sắc tương ứng từng mức độ (warning, heavy warning, critical).\nLưu biểu đồ thành file hình ảnh (.png)\nLưu biểu đồ vào một file PNG tạm thời trên local trước khi upload.\nUpload file biểu đồ lên Amazon S3\nDùng boto3 client để upload file biểu đồ lên bucket S3 đã cấu hình, giúp lưu trữ và chia sẻ dễ dàng.\nVí dụ code: import matplotlib.pyplot as plt import boto3 def plot_anomaly_chart(df, output_path): plt.figure(figsize=(12,6)) plt.plot(df[\u0026#39;timestamp\u0026#39;], df[\u0026#39;cpu_usage\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;) colors = { \u0026#39;warning\u0026#39;: \u0026#39;orange\u0026#39;, \u0026#39;heavy warning\u0026#39;: \u0026#39;red\u0026#39;, \u0026#39;critical\u0026#39;: \u0026#39;purple\u0026#39; } for level, color in colors.items(): subset = df[df[\u0026#39;level\u0026#39;] == level] plt.scatter(subset[\u0026#39;timestamp\u0026#39;], subset[\u0026#39;cpu_usage\u0026#39;], color=color, label=level.capitalize()) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Utilization (%)\u0026#39;) plt.title(\u0026#39;CPU Utilization with Anomaly Detection\u0026#39;) plt.legend() plt.tight_layout() plt.savefig(output_path) plt.close() print(f\u0026#34;Biểu đồ đã được lưu tại {output_path}\u0026#34;) def upload_chart_to_s3(s3_client, bucket_name, file_path, s3_key): try: with open(file_path, \u0026#39;rb\u0026#39;) as f: s3_client.put_object(Bucket=bucket_name, Key=s3_key, Body=f) print(f\u0026#34;Đã upload biểu đồ lên s3://{bucket_name}/{s3_key}\u0026#34;) except Exception as e: print(f\u0026#34;Lỗi khi upload biểu đồ lên S3: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/10.-rundemoandvalidation/",
+	"title": "Chạy Demo và Kiểm Tra Kết Quả",
+	"tags": [],
+	"description": "",
+	"content": "Phần này hướng dẫn cách chạy thử demo toàn bộ pipeline phát hiện bất thường, đồng thời kiểm tra và xác thực kết quả cùng các log liên quan để đảm bảo hệ thống hoạt động đúng.\nCác mục con 10.1-ExecuteRunDemo 10.2-CheckResultsAndLogs "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/10.-rundemoandvalidation/10.1-executerundemo/",
+	"title": "Thực Thi Chạy Demo",
+	"tags": [],
+	"description": "",
+	"content": "Ở phần này, bạn sẽ thực thi hàm run_demo() để tạo dữ liệu mẫu giả lập, tiến hành dự đoán phát hiện bất thường, gửi cảnh báo và lưu kết quả lên AWS S3 cùng CloudWatch.\nMục tiêu Tạo dữ liệu log giả liên tục để mô phỏng dữ liệu thời gian thực. Áp dụng mô hình Isolation Forest đã huấn luyện để dự đoán điểm bất thường. Gửi log bất thường lên CloudWatch và cảnh báo real-time qua Discord. Lưu kết quả phát hiện bất thường và biểu đồ lên S3 để dễ dàng theo dõi. Hướng dẫn thực hiện Đảm bảo bạn đã hoàn thành các bước cài đặt thư viện, kết nối Google Drive và tải mô hình, scaler.\nChạy hàm run_demo(num_logs=25) để tạo 25 bản ghi log giả và xử lý phát hiện bất thường.\nQuan sát đầu ra console để kiểm tra thông tin cảnh báo và trạng thái gửi log.\nKiểm tra trên AWS S3 để xem file anomaly_results.csv và biểu đồ đã được upload.\nKiểm tra CloudWatch Logs để xem log bất thường.\nKiểm tra Discord để nhận cảnh báo real-time nếu có anomaly.\nVí dụ code: if __name__ == \u0026#34;__main__\u0026#34;: results_df = run_demo(num_logs=25) print(\u0026#34;Demo kết thúc, dữ liệu đã được lưu và cảnh báo gửi đi.\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/10.-rundemoandvalidation/10.2-checkresultsandlogs/",
+	"title": "Kiểm Tra Kết Quả và Log",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi thực thi hàm chạy demo, bước tiếp theo là kiểm tra kết quả phát hiện bất thường và các log được gửi lên hệ thống AWS cũng như cảnh báo qua Discord.\nCác bước kiểm tra: Kiểm tra file kết quả trên S3\nĐăng nhập AWS Console, vào dịch vụ Amazon S3. Mở bucket được cấu hình (ví dụ: anomaly12). Tìm file anomaly_results.csv để xem bảng dữ liệu phát hiện bất thường, bao gồm timestamp, cpu_usage, anomaly_score và level. Tìm file biểu đồ anomaly_levels_plot.png để xem trực quan các điểm bất thường. Kiểm tra log trên CloudWatch Logs\nVào AWS CloudWatch trên Console. Chọn Logs → Log groups → AnomalyDetectionLogs. Mở DemoStream để xem các bản ghi log gửi lên trong quá trình demo. Kiểm tra các log có trường anomaly=true hoặc điểm anomaly_score thấp bất thường. Kiểm tra cảnh báo trên Discord\nMở kênh Discord được cấu hình webhook. Kiểm tra các tin nhắn cảnh báo real-time với thông tin mức độ (warning, heavy warning, critical), thời gian và điểm anomaly_score. Nếu không thấy cảnh báo, có thể dữ liệu demo không có bất thường hoặc lỗi gửi webhook. Kiểm tra console output trong quá trình chạy\nQuan sát các dòng thông báo in ra console khi chạy run_demo() để đảm bảo không có lỗi gửi log hay cảnh báo. Mẹo: Nếu không thấy dữ liệu hoặc log trên AWS, hãy kiểm tra lại cấu hình AWS credentials, region, tên bucket, log group, log stream. Đảm bảo Discord webhook URL đúng và đang hoạt động. Có thể tăng số bản ghi giả (num_logs) để có nhiều dữ liệu hơn trong lần chạy demo. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/11.-cleanupresources/",
+	"title": "Dọn Dẹp Tài Nguyên",
+	"tags": [],
+	"description": "",
+	"content": "Phần cuối cùng hướng dẫn bạn cách xóa các tài nguyên AWS đã tạo trong quá trình workshop để tránh phát sinh chi phí không mong muốn, đồng thời ngắt kết nối Google Drive nếu có sử dụng.\nCác mục con 11.1-DeleteAWSResources 11.2-DisconnectGoogleDrive "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/11.-cleanupresources/11.1-deleteawsresources/",
+	"title": "Xóa Tài Nguyên AWS",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi hoàn thành workshop hoặc khi không còn sử dụng, việc xóa tài nguyên AWS là cần thiết để tránh phát sinh chi phí không mong muốn.\nCác tài nguyên cần xóa: Amazon CloudWatch Logs\nLog group: AnomalyDetectionLogs Log stream: DemoStream Amazon S3 Bucket\nBucket: anomaly12 (hoặc tên bạn đã cấu hình) Các bước xóa tài nguyên: Xóa log stream và log group trên CloudWatch\nVào AWS Management Console → CloudWatch → Logs. Chọn Log groups → chọn AnomalyDetectionLogs. Trong AnomalyDetectionLogs, chọn DemoStream → Xóa log stream. Quay lại AnomalyDetectionLogs → Xóa log group. Xóa bucket và nội dung trên S3\nVào AWS Management Console → S3. Tìm bucket anomaly12. Xóa toàn bộ file bên trong bucket. Sau đó xóa bucket. Lưu ý quan trọng Hãy chắc chắn rằng bạn đã sao lưu dữ liệu cần thiết trước khi xóa. Việc xóa bucket S3 có thể mất vài phút nếu bucket chứa nhiều dữ liệu. Nếu bạn gặp lỗi không thể xóa bucket, kiểm tra xem có phiên bản quản lý phiên bản (versioning) được bật không, cần tắt hoặc xóa các phiên bản trước. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/11.-cleanupresources/11.2-disconnectgoogledrive/",
+	"title": "Ngắt Kết Nối Google Drive",
+	"tags": [],
+	"description": "",
+	"content": "Sau khi hoàn thành workshop hoặc khi không còn cần sử dụng, việc ngắt kết nối Google Drive trong môi trường Google Colab giúp bảo mật và giải phóng quyền truy cập.\nCác bước ngắt kết nối Google Drive trong Google Colab: Trong notebook Google Colab, thực hiện lệnh: from google.colab import drive drive.flush_and_unmount() Hoặc trực tiếp nhấn nút Disconnect ở góc trên bên phải của giao diện Google Colab, bên cạnh tên runtime.\nXác nhận để ngắt kết nối.\nLưu ý: Ngắt kết nối Google Drive sẽ không xóa dữ liệu trên Drive của bạn, chỉ tắt quyền truy cập từ phiên làm việc hiện tại.\nNếu muốn tiếp tục sử dụng dữ liệu từ Drive, bạn cần thực hiện lại bước mount Drive khi bắt đầu phiên làm việc mới.\nChúc Mừng! Bạn đã hoàn thành workshop thành công! Chúc mừng bạn đã vượt qua các thử thách và làm chủ được kỹ thuật phát hiện bất thường với Machine Learning.\nChúc bạn tiếp tục thành công trên hành trình học tập và phát triển nghề nghiệp!\nNếu workshop có sai sót, mọi người có thể gửi mail qua địa chỉ kimirokishoyu@gmail.com để tớ có thể update nội dung kịp lúc ^^. Một lần nữa, mình xin cảm ơn mọi người đã thực hành bài lab và chúc mọi người thật nhiều sức khỏe nhé!\nTrân trọng,\nZen\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/workshopaws/vi/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

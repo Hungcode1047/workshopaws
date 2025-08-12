@@ -1,0 +1,337 @@
+[
+{
+	"uri": "http://localhost:1313/workshopaws/",
+	"title": "Introduction",
+	"tags": [],
+	"description": "",
+	"content": "Overview In the context of increasingly complex infrastructure and applications, monitoring log data to detect anomalies plays a vital role in maintaining system stability and security. Timely anomaly detection helps prevent incidents, minimize damage, and optimize operational performance.\nThis workshop guides you through building an anomaly detection system using the Isolation Forest algorithm on batch-processed JSON log data. The system covers data preprocessing, advanced feature engineering (rolling mean, rolling std, difference), model training, and severity level classification. Upon detecting anomalies, alerts are sent in real-time via Discord webhook, and results are stored in AWS CloudWatch Logs and Amazon S3. The entire workflow runs locally (on Google Colab) with instructions to extend deployment to AWS infrastructure.\nThe workshop also includes generating synthetic data to simulate real-time log streaming, providing a testing environment to evaluate system performance.\nObjectives By the end of this workshop, you will be able to:\nUnderstand and implement the Isolation Forest algorithm for anomaly detection. Perform preprocessing and feature engineering on JSON log data (rolling mean, std, difference). Classify anomaly severity levels based on static and dynamic thresholds. Integrate with AWS CloudWatch and S3 for log and result storage. Send real-time alerts via Discord webhook. Generate synthetic data to simulate streaming data scenarios. Visualize anomaly detection results with charts. Prepare for scalable deployment on AWS when needed. Scope This workshop focuses on:\nProcessing JSON log data in batches and simulating real-time data streams. Using the unsupervised Isolation Forest algorithm. Integrating AWS services (CloudWatch, S3) and Discord for storage and alerting. Running the system locally (Google Colab) with options to extend to AWS infrastructure. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/1.-introduction/",
+	"title": "Introduction",
+	"tags": [],
+	"description": "",
+	"content": "The Anomaly Detection System is a solution implemented to monitor system data (such as CPU usage, application logs, network traffic) and automatically detect abnormal behaviors.\nThis system is designed to minimize false positives, process data in real-time, and send instant alerts via channels like Discord, while visualizing anomaly detection results on a dashboard.\nWith the current workflow, the system includes the main components:\nCollect input data from various sources (e.g., JSON logs, time series metrics from infrastructure). Preprocess data and perform feature engineering such as rolling mean, rolling std, and difference indicators. Normalize data to ensure features have balanced influence on the model. Train the Isolation Forest model to detect anomalies without labeled data (unsupervised learning). Assign severity levels to each anomaly based on probability thresholds. Integrate AWS CloudWatch for log storage and S3 for saving result charts. Send instant alerts via Discord when anomalies are detected. Display results and charts for easy user analysis. By deploying this system, you can achieve the following benefits:\nAutomatic anomaly detection in infrastructure and application operational data. Reduced monitoring costs by replacing manual inspection processes. Real-time alerts to handle incidents immediately. Easy scalability to support various data types (time series, logs, network traffic). Direct integration with AWS for data management, storage, and analysis. Result visualization through charts for easy and intuitive analysis. False positive reduction thanks to data preprocessing and intelligent severity assignment. With these advantages, your anomaly detection system becomes a valuable tool for infrastructure monitoring, helping save time, reduce risks, and improve operational efficiency.\nSubsections 1.1-WorkshopPurpose 1.2-EstimatedTime 1.3-TargetAudience 1.4-Prerequisites "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/1.-introduction/1.1-workshoppurpose/",
+	"title": "Workshop Objectives",
+	"tags": [],
+	"description": "",
+	"content": "The objective of the Anomaly Detection System workshop is to help participants understand and implement a complete solution to monitor and detect abnormal behaviors in system infrastructure, applications, and network traffic.\nThrough this workshop, you will be guided step-by-step to:\nCollect and process data from various sources (logs, metrics, network traffic). Apply unsupervised learning techniques such as Isolation Forest to detect anomalies without labeled data. Minimize false positives by using preprocessing techniques and severity classification. Integrate AWS services like Amazon S3, Amazon CloudWatch for data storage and management. Set up real-time alerts via Discord webhook upon anomaly detection. Visualize results on dashboards for easy analysis. The ultimate goals are to help you:\nMaster the deployment workflow of an intelligent monitoring system. Apply knowledge to real-world system operations. Save time and cost compared to manual methods. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/1.-introduction/1.2-estimatedtime/",
+	"title": "Estimated Time",
+	"tags": [],
+	"description": "",
+	"content": "The estimated duration for the Anomaly Detection with Machine Learning workshop is based on each step in the workflow and the complexity of processing, training, integration, and testing tasks.\nThe total expected completion time is 5–7 hours, divided into the following main phases:\nIntroduction \u0026amp; environment setup (Google Colab and AWS): 30–45 minutes\n(Installing necessary libraries on Google Colab, connecting Google Drive; configuring AWS if extended.)\nData collection and preprocessing: 1 hour\n(Reading CSV data from Google Drive, handling timestamps, feature engineering with rolling mean/std/diff, data normalization.)\nTraining and tuning the Isolation Forest model: 1.5 hours\n(Initializing the model, training on the dataset, predicting anomaly scores, classifying severity levels.)\nDeploying the pipeline, integrating AWS CloudWatch, S3, and Discord webhook: 1 hour\n(Configuring AWS clients, setting up log groups and streams, sending logs to CloudWatch, storing results on S3, sending alerts via Discord.)\nBuilding dashboards to visualize data and anomaly detection results: 45 minutes\n(Plotting CPU Utilization charts, subcharts, anomaly score charts, and step charts; saving charts locally and uploading to S3.)\nRunning demos, testing, and performance optimization: 45 minutes\n(Generating simulated data, running real-time anomaly detection pipeline, checking logs and alerts, adjusting false positive thresholds.)\n⏱️ Note: The above times are estimates and may vary depending on the participant’s skill level and system conditions. AWS extensions may require additional time depending on experience with AWS service configuration.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/1.-introduction/1.3-target-audience/",
+	"title": "Target Audience",
+	"tags": [],
+	"description": "",
+	"content": "The Anomaly Detection with Machine Learning workshop is aimed at the following groups:\nData Engineers and Data Scientists who want to learn and apply unsupervised anomaly detection algorithms on real-time data and system logs.\nDevOps/Cloud Engineers seeking to deploy automated monitoring systems that reduce false alarms and improve accuracy in incident detection.\nSoftware Developers interested in integrating machine learning solutions into log processing and alerting pipelines.\nStudents, interns, and beginners with basic knowledge of Python and machine learning, who want hands-on experience building an anomaly detection system.\nIndividuals interested in learning how to integrate AWS services like CloudWatch, S3, along with alerting tools using Discord webhook within a monitoring workflow.\nNote: Participants are expected to have basic Python skills and a preliminary understanding of machine learning, especially unsupervised learning techniques.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/1.-introduction/1.4-prerequisites/",
+	"title": "Prerequisites",
+	"tags": [],
+	"description": "",
+	"content": "Before starting the workshop, participants need to prepare and have the following knowledge and tools:\nBasic knowledge:\nProficient in Python programming. Basic understanding of machine learning, especially unsupervised learning algorithms like Isolation Forest. Basic knowledge of time series and log data processing and analysis. Development environment:\nPersonal computer with a stable Internet connection. Python 3.x installed. Required Python libraries: pandas, numpy, matplotlib, scikit-learn, joblib, boto3, requests (installation instructions will be provided during the workshop). Google Colab (or a similar environment) to run code and connect with Google Drive. AWS account (recommended):\nAWS account with permissions to create and manage CloudWatch and S3 services. AWS CLI and boto3 configured to connect to AWS. Supporting tools:\nDiscord account and webhook setup to receive alerts. Note: The workshop will guide you on installing libraries and basic configuration, but participants are expected to have experience using Python and a programming environment similar to Google Colab for smooth practice.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/2.-systemarchitecture/",
+	"title": "System Architecture",
+	"tags": [],
+	"description": "",
+	"content": "This section provides an overview of the anomaly detection system architecture, including data sources, processing workflow, detection model, and integration with AWS and Discord.\nSubsections 2.1-DataSources 2.2-DataProcessing 2.3-AnomalyDetectionModel 2.4-AWSDIscordIntegration "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/2.-systemarchitecture/2.1-datasources/",
+	"title": "Data Sources",
+	"tags": [],
+	"description": "",
+	"content": "Data sources play an important role in training and testing the anomaly detection system.\nTypes of data used JSON Logs\nIncludes timestamp, CPU usage, memory usage, and network parameters.\nExample: system logs from servers or simulated data.\nSystem Metrics\nCPU usage, memory usage, disk I/O, network latency.\nNetwork Traffic\nInformation about packet counts, transmission rates, source and destination IP addresses.\nData format requirements All data must have timestamps formatted according to the ISO 8601 standard. Data fields should be clearly and consistently named. Missing or invalid data should be filtered or processed before feeding into the model. Data source in this workshop For this workshop, we will use the file (cpu_utilization_asg_misconfiguration.csv) containing CPU utilization information.\nThe data is available at: https://www.kaggle.com/code/leomauro/anomaly-detection-streaming-data/input\nThis file will be mounted on Google Drive to facilitate processing and model training.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/2.-systemarchitecture/2.2-dataprocessing/",
+	"title": "Data Processing",
+	"tags": [],
+	"description": "",
+	"content": "Data processing is a crucial step to ensure that the input data for the model is clean, consistent, and optimized for training.\nMain processing steps Load data\nRead the file cpu_utilization_asg_misconfiguration.csv mounted from Google Drive. Identify data structure: columns, data types, dataset size. Clean data\nRemove rows with missing or NaN values. Normalize data types, especially the timestamp column to ISO 8601 format. Handle invalid outlier values. Transform data\nRename columns for consistency (e.g., use CPUUtilization instead of cpu). Convert measurement units if necessary (%, MB, ms). Create training and testing datasets\nSplit data into training and testing sets (e.g., 80%-20%). Ensure data is sorted by time. Notes All processing steps should be logged for verification and reproducibility. In this workshop, CPU data from the CSV file will be the primary source for training the anomaly detection model. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/2.-systemarchitecture/2.3-anomalydetectionmodel/",
+	"title": "Anomaly Detection Model",
+	"tags": [],
+	"description": "",
+	"content": "The Anomaly Detection Model is the core component of the system, responsible for analyzing processed data and identifying abnormal data points.\nModel choice In this workshop, we use Isolation Forest – an unsupervised machine learning algorithm based on isolating data points that differ significantly from the majority.\nHow it works Isolation Forest builds multiple random binary trees. Anomalous data points are isolated more quickly, resulting in shorter path lengths in the trees. Based on the average path length, the model computes an anomaly score. Training and prediction workflow Model training\nUse the dataset from cpu_utilization_asg_misconfiguration.csv (mounted from Google Drive). The model requires no labels since it is an unsupervised method. Anomaly prediction\nApply the model on new or test data. Classify data points as anomaly or normal based on anomaly scores compared to a predefined threshold. Alerting\nWhen anomalies are detected, the system sends alerts via Discord Webhook. Key model parameters n_estimators: Number of trees in the forest (default 100). max_samples: Number of samples used for each tree. contamination: Expected proportion of anomalies in the data (e.g., 0.05). random_state: Random seed for reproducibility. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/2.-systemarchitecture/2.4-awsdiscordintegration/",
+	"title": "AWS and Discord Integration",
+	"tags": [],
+	"description": "",
+	"content": "Overview The AWS \u0026amp; Discord Integration component connects the anomaly detection system with AWS services and the Discord platform, ensuring real-time data storage, processing, and alerting.\nRole of AWS in the system Amazon S3: Stores source data (cpu_utilization_asg_misconfiguration.csv) and analysis results. Amazon SageMaker: Trains and deploys the Isolation Forest model for anomaly detection. AWS IAM: Manages access permissions for services and scripts. Optional: AWS CloudWatch can be integrated to store logs or monitor system metrics. Discord Webhook Integration Discord Webhook is used to send instant alerts to a designated channel upon anomaly detection.\nWorkflow: Anomaly detection\nIsolation Forest model evaluates new data. If data is classified as anomalous, alert information is generated (timestamp, CPU value, anomaly score). Sending alert via Discord\nPython script uses the requests library to POST alert data to the Discord Webhook URL. Alert includes: Detection time Anomalous CPU value Anomaly score Alert severity level Display on Discord\nMessage appears in the configured Discord channel, enabling the operations team to respond promptly. Webhook security Webhook URL is stored in a .env configuration file or environment variable to avoid hardcoding in source code. Strict permissions and limited knowledge of the Webhook URL help prevent spoofed alerts. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/3.-setup/",
+	"title": "Environment Setup",
+	"tags": [],
+	"description": "",
+	"content": "This section guides you through installing necessary libraries and connecting Google Drive to prepare the environment for the workshop.\nSubsections 3.1-InstallLibraries 3.2-ConnectGoogleDrive "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/3.-setup/3.1-installlibraries/",
+	"title": "Library Installation",
+	"tags": [],
+	"description": "",
+	"content": "Overview This step guides you through installing the necessary Python libraries for the anomaly detection workshop.\nObjectives Install libraries required for data processing, model training, and AWS integration. Ensure a stable working environment without missing library errors. Instructions Open Google Colab or your Python environment. Run the following command to install: !pip install awscli boto3 pandas numpy matplotlib scikit-learn joblib requests "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/3.-setup/3.2-connectgoogledrive/",
+	"title": "Connecting Google Drive",
+	"tags": [],
+	"description": "",
+	"content": "This section guides you on how to connect Google Drive with the Google Colab environment to access and process data for the workshop.\nPurpose Connecting Google Drive allows you to easily read and write data files, store models and results directly on your personal Drive, preventing data loss when the Colab session disconnects.\nSteps to follow Specifically, go to your Drive and create a folder named \u0026ldquo;Anomaly\u0026rdquo;. Then upload the file \u0026lsquo;cpu_utilization_asg_misconfiguration.csv\u0026rsquo; into it. The result should look like this:\nAfter that, run the following code in Colab:\nimport pandas as pd import numpy as np import matplotlib.pyplot as plt from sklearn.ensemble import IsolationForest from datetime import datetime from google.colab import drive drive.mount(\u0026#39;/content/drive\u0026#39;) file_path = \u0026#39;/content/drive/MyDrive/Anomaly/cpu_utilization_asg_misconfiguration.csv\u0026#39; df = pd.read_csv(file_path) df.head() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/4.-dataprocessingandfeatureengineering/",
+	"title": "Data Processing and Feature Extraction Techniques",
+	"tags": [],
+	"description": "",
+	"content": "This section guides you on how to load raw data, process it, and calculate the necessary features for the anomaly detection model. You will learn how to transform raw data into meaningful variables to prepare for model training.\nSubsections 4.1-LoadAndTransformData 4.2-FeatureCalculation 4.3-DataNormalization "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/4.-dataprocessingandfeatureengineering/4.1-loadandtransformdata/",
+	"title": "Data Loading and Transformation",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we will load data from Google Drive and perform basic transformations to prepare the data for analysis and modeling.\nThe main steps include:\nReading data from CSV file:\nUse the Pandas library to read the file cpu_utilization_asg_misconfiguration.csv stored on Google Drive.\nConverting the timestamp column:\nConvert the timestamp column to a standard datetime format and set it as the DataFrame index for convenient time-based operations.\n# Time data processing df[\u0026#39;timestamp\u0026#39;] = pd.to_datetime(df[\u0026#39;timestamp\u0026#39;]) df.set_index(\u0026#39;timestamp\u0026#39;, inplace=True) df.sort_index(inplace=True) Sorting data by time:\nSort records in ascending time order to ensure continuity and correct sequence.\nHandling missing data:\nRemove or handle rows with missing values (if any) to ensure clean and proper input data.\nCareful data preparation helps subsequent steps such as feature engineering and model training to be more effective and accurate.\nFinally, display a data preview:\n# Display data preview df.head() Success looks like the image below.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/4.-dataprocessingandfeatureengineering/4.2-featurecalculation/",
+	"title": "Feature Engineering",
+	"tags": [],
+	"description": "",
+	"content": "After the data is loaded and transformed, the next step is to compute features that help the anomaly detection model perform better.\nThe main features include:\nRolling Mean:\nCalculate the moving average of CPU Utilization values over a sliding window of 3 data points to smooth and reduce noise in the data.\nRolling Standard Deviation:\nCalculate the standard deviation over a 3-point window to represent data variability.\nDifference:\nCompute the difference between the current and previous values to detect sudden changes.\n# Add rolling mean column based on the past 3 data points, e.g., for values 1, 2, 3, the next mean is (1+2+3)/3 = 2 df[\u0026#39;rolling_mean\u0026#39;] = df[\u0026#39;value\u0026#39;].rolling(window=3, min_periods=1).mean() # Calculate rolling standard deviation (variance) with window size 3 df[\u0026#39;rolling_std\u0026#39;] = df[\u0026#39;value\u0026#39;].rolling(window=3, min_periods=1).std() # diff is the numeric difference between the current and previous values, e.g., if value 1 is 10 and value 2 is 50, diff = 50 - 10 = 40 df[\u0026#39;diff\u0026#39;] = df[\u0026#39;value\u0026#39;].diff().fillna(0) Handling missing data:\nDrop records containing NaN values generated during feature calculation to ensure clean data. df.dropna(inplace=True) Calculating these features helps the model capture trends and latent variations in the data, thereby improving anomaly detection effectiveness.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/4.-dataprocessingandfeatureengineering/4.3-datanormalization/",
+	"title": "Data Normalization",
+	"tags": [],
+	"description": "",
+	"content": "After calculating the features, the next step is to normalize the data to bring all features to the same scale, helping the model learn more effectively and avoid being dominated by features with large value ranges.\nNormalization method used:\nStandardScaler from the scikit-learn library. from sklearn.preprocessing import StandardScaler scaler = StandardScaler() features = scaler.fit_transform(df[[\u0026#39;value\u0026#39;, \u0026#39;rolling_mean\u0026#39;, \u0026#39;rolling_std\u0026#39;, \u0026#39;diff\u0026#39;]]) Benefits of normalization:\nEnsures all features have the same influence on the model. Speeds up convergence and improves stability when training the Isolation Forest model. Reduces the impact of unwanted outliers during training. Data normalization is a crucial step to ensure input quality for the model, thereby improving the accuracy of anomaly detection.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/5.-initialdatavisualization/",
+	"title": "Initial Data Visualization",
+	"tags": [],
+	"description": "",
+	"content": "This section focuses on visualizing raw data and extracted features through charts, helping you observe trends and inspect data before model training.\nSubsections 5.1-PlotCPUUtilization 5.2-PlotSubcharts 5.3-SaveCharts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/5.-initialdatavisualization/5.1-plotcpuutilization/",
+	"title": "CPU Usage Chart",
+	"tags": [],
+	"description": "",
+	"content": "Data visualization is an important step that helps users easily understand and analyze system fluctuations.\nIn this step, we will plot the CPU Utilization over time to observe trends and potential anomalies.\nSteps to perform:\nUse the matplotlib library to create a line chart. The x-axis represents time (timestamp). The y-axis represents CPU usage value (value). Add title, axis labels, and grid for clarity and readability. # 🧪 Plot raw data plt.figure(figsize=(14, 6)) plt.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;) plt.title(\u0026#39;CPU Utilization Over Time\u0026#39;) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Usage (%)\u0026#39;) plt.grid(True) plt.legend() plt.show() Result: Purpose:\nObserve changes in CPU usage over time. Identify anomalies or significant fluctuations before applying the detection model. Creating this chart provides a visual insight into the raw data, laying the foundation for further analysis steps.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/5.-initialdatavisualization/5.2-plotsubcharts/",
+	"title": "Detailed Subcharts",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we will visualize the calculated features to better understand the variations in the data.\nSpecifically, three subcharts will be drawn in the same figure:\nCPU Utilization and Rolling Mean: Helps observe the moving average trend of CPU usage. Rolling Standard Deviation: Shows data variability over time. Difference (difference between consecutive values): Indicates the magnitude of changes between successive data points. Steps to perform:\nUse matplotlib with subplots to create 3 vertically stacked subplots. Share the x-axis for easier time comparison. Set titles, axis labels, and legends for each plot. Add grids for better clarity. Use different colors and line styles to distinguish variables. fig, (ax1, ax2, ax3) = plt.subplots(3, 1, figsize=(10, 12), sharex=True) # Plot 1: Value and Rolling Mean ax1.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;, marker=\u0026#39;o\u0026#39;) ax1.plot(df.index, df[\u0026#39;rolling_mean\u0026#39;], label=\u0026#39;Rolling Mean\u0026#39;, color=\u0026#39;green\u0026#39;, linestyle=\u0026#39;--\u0026#39;) ax1.set_title(\u0026#39;CPU Utilization and Rolling Mean\u0026#39;) ax1.set_ylabel(\u0026#39;Value\u0026#39;) ax1.legend() ax1.grid(True) # Plot 2: Rolling Std ax2.plot(df.index, df[\u0026#39;rolling_std\u0026#39;], label=\u0026#39;Rolling Std\u0026#39;, color=\u0026#39;orange\u0026#39;, marker=\u0026#39;o\u0026#39;) ax2.set_title(\u0026#39;Rolling Standard Deviation\u0026#39;) ax2.set_ylabel(\u0026#39;Standard Deviation\u0026#39;) ax2.legend() ax2.grid(True) # Plot 3: Diff ax3.plot(df.index, df[\u0026#39;diff\u0026#39;], label=\u0026#39;Difference\u0026#39;, color=\u0026#39;red\u0026#39;, marker=\u0026#39;o\u0026#39;) ax3.set_title(\u0026#39;Difference (Value Diff)\u0026#39;) ax3.set_xlabel(\u0026#39;Timestamp\u0026#39;) ax3.set_ylabel(\u0026#39;Difference\u0026#39;) ax3.legend() ax3.grid(True) # Adjust layout to avoid overlap plt.tight_layout() plt.show() Purpose:\nGain deeper insight into data characteristics. Help detect potential anomalies in feature metrics. Prepare the foundation for training the anomaly detection model. Detailed feature visualization enhances accuracy and efficiency in subsequent processing steps.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/5.-initialdatavisualization/5.3-savecharts/",
+	"title": "Saving Charts",
+	"tags": [],
+	"description": "",
+	"content": "After completing the visualization charts, the next step is to save these charts as image files for easy use in reports, analysis, or uploading to AWS S3.\nSteps to perform:\nUse plt.savefig() from the matplotlib library to save the chart in .png format. Name the file clearly, e.g., anomaly_metrics_plot.png. Make sure to call plt.close() to free memory and avoid issues when creating new charts. The saved local image files can be uploaded to storage services like Amazon S3 for convenient management and remote access. # Save the chart plt.savefig(\u0026#39;anomaly_metrics_plot.png\u0026#39;) plt.close() Notes:\nEnsure the save directory exists or handle directory creation if necessary. Check file write permissions to avoid errors when saving. .png format is preferred for high quality and wide compatibility. Saving charts is an important step to preserve analysis results and easily share them with stakeholders.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/6.-trainisolationforestmodel/",
+	"title": "Train Isolation Forest Model",
+	"tags": [],
+	"description": "",
+	"content": "Detailed guidance on initializing and training the Isolation Forest model to detect anomalies on prepared data. Includes prediction steps, severity classification, and model saving.\nSubsections 6.1-InitializeAndTrainModel 6.2-PredictAnomalies 6.3-AssignSeverityLevel 6.4-SaveModelAndScaler "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/6.-trainisolationforestmodel/6.1-initializeandtrainmodel/",
+	"title": "Model Initialization and Training",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we will initialize the Isolation Forest model and train it on the normalized feature dataset.\nMain steps:\nUse IsolationForest from the sklearn.ensemble library. Configure important parameters: contamination=0.2 — assuming 20% of the data are anomalies. n_estimators=500 — number of trees in the forest to increase accuracy. max_samples=256 or less, suitable for the dataset size. random_state=42 — to ensure reproducibility. n_jobs=-1 — use multiple CPU cores to speed up training. Call the fit() method with the normalized feature data to train the model. import joblib import matplotlib.pyplot as plt from sklearn.ensemble import IsolationForest # Train IsolationForest model = IsolationForest( contamination=0.2, # Increased to fit smaller dataset (1/5 points) random_state=42, n_estimators=500, max_samples=min(len(features), 256), # Reduce max_samples if needed n_jobs=-1 ) After training, the model will be able to identify anomalies based on the input data structure.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/6.-trainisolationforestmodel/6.2-predictanomalies/",
+	"title": "Anomaly Prediction",
+	"tags": [],
+	"description": "",
+	"content": "After the Isolation Forest model has been trained, the next step is to use this model to predict anomalies in the data.\nSteps to perform:\nUse the predict() method to classify data points as normal (1) or anomalous (-1). Use the decision_function() method to calculate the anomaly score, reflecting how far a data point deviates from the normal data distribution. Combine the prediction results and anomaly scores to identify and label data points. Add new columns in the DataFrame to store results such as anomaly_score and anomaly_confidence. df[\u0026#39;anomaly_score\u0026#39;] = model.fit_predict(features) df[\u0026#39;anomaly_confidence\u0026#39;] = model.decision_function(features) This prediction helps detect events or data points with abnormal behavior, supporting more effective monitoring and alerting.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/6.-trainisolationforestmodel/6.3-assignseveritylevel/",
+	"title": "Severity Level Assignment",
+	"tags": [],
+	"description": "",
+	"content": "After predicting anomaly scores, the next step is to assign severity levels to each point based on the anomaly score values.\nMethod for assigning severity levels:\nDefine thresholds to classify alert levels, for example: critical: score less than -0.15 heavy warning: score from -0.15 up to (but not including) -0.12 warning: score from -0.12 up to (but not including) -0.1 normal: score greater than or equal to -0.1 # Alert level classification (more sensitive thresholds) def classify_level(score): if score \u0026lt; -0.15: return \u0026#34;critical\u0026#34; elif score \u0026lt; -0.12: return \u0026#34;heavy warning\u0026#34; elif score \u0026lt; -0.1: return \u0026#34;warning\u0026#34; else: return \u0026#34;normal\u0026#34; df[\u0026#39;level\u0026#39;] = df[\u0026#39;anomaly_confidence\u0026#39;].apply(classify_level) df[\u0026#39;is_anomaly\u0026#39;] = df[\u0026#39;level\u0026#39;] != \u0026#34;normal\u0026#34; Create a classification function based on anomaly scores and apply it to the anomaly_confidence column. Add a level column in the DataFrame to store severity information. Add an is_anomaly column to mark points that are anomalous (with levels other than normal). Assigning severity levels helps prioritize alerts for better incident management.\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/6.-trainisolationforestmodel/6.4-savemodelandscaler/",
+	"title": "Model and Scaler Saving",
+	"tags": [],
+	"description": "",
+	"content": "After training and assigning severity levels to the data, the next important step is to save the Isolation Forest model and the scaler for later use or deployment.\nSteps to perform:\nUse the joblib library to save the model and scaler as .pkl files. Name the files appropriately, for example: anomaly_model.pkl for the model, scaler.pkl for the scaler. Saving the model allows you to load and use it without retraining, saving time and resources. Ensure these files are saved in accessible locations or uploaded to storage services (e.g., Amazon S3). # Save model and scaler joblib.dump(model, \u0026#39;anomaly_model.pkl\u0026#39;) joblib.dump(scaler, \u0026#39;scaler.pkl\u0026#39;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/",
+	"title": "Visualize Anomaly Detection Results",
+	"tags": [],
+	"description": "",
+	"content": "This section guides you to visualize anomaly detection results on charts, helping you easily evaluate and analyze anomalies and their severity levels over time.\nSubsections 7.1-PlotChartsWithAnomalies 7.2-PlotStepChart 7.3-SaveCharts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/7.1-plotchartswithanomalies/",
+	"title": "Anomaly Visualization Plot",
+	"tags": [],
+	"description": "",
+	"content": "This step focuses on visualizing the anomaly detection results on a chart, helping users easily identify anomaly points along with their severity levels.\nContent:\nPlot a line chart showing CPU Utilization values over time. Mark anomaly points with large \u0026ldquo;x\u0026rdquo; markers colored according to severity: warning: orange. heavy warning: red. critical: purple. Add a legend to clearly distinguish severity levels. Customize marker size, color, and style for clarity and visual appeal. Large markers highlight anomaly points on the chart. Plotting code:\nimport matplotlib.pyplot as plt # Plot CPU Utilization plt.figure(figsize=(12, 6)) plt.plot(df.index, df[\u0026#39;value\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;) # Mark anomalies with colored \u0026#39;x\u0026#39; markers based on severity level colors = {\u0026#39;warning\u0026#39;: \u0026#39;orange\u0026#39;, \u0026#39;heavy warning\u0026#39;: \u0026#39;red\u0026#39;, \u0026#39;critical\u0026#39;: \u0026#39;purple\u0026#39;} for level, color in colors.items(): subset = df[df[\u0026#39;level\u0026#39;] == level] if not subset.empty: plt.scatter( subset.index, subset[\u0026#39;value\u0026#39;], color=color, marker=\u0026#39;x\u0026#39;, s=120, label=level ) plt.title(\u0026#39;Anomaly Detection with Severity Levels\u0026#39;) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Utilization (%)\u0026#39;) plt.legend() plt.grid(True) plt.tight_layout() plt.show() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/7.2-plotstepchart/",
+	"title": "Step Chart for Anomaly Severity Levels",
+	"tags": [],
+	"description": "",
+	"content": "In this step, we create a step chart to visualize the severity levels of anomalies over time. This chart helps clearly track the transitions between different alert levels.\nDetails:\nUse matplotlib\u0026rsquo;s plt.step() function to plot the step chart, with the x-axis as time and y-axis as the anomaly severity level (level). Customize the chart with a title, axis labels, and grid for better readability. The chart shows transitions between levels such as normal, warning, heavy warning, and critical. Use the step style where='post' to mark the severity level accurately at each timestamp. Code:\nimport matplotlib.pyplot as plt plt.figure(figsize=(10, 4)) plt.step(df.index, df[\u0026#39;level\u0026#39;], where=\u0026#39;post\u0026#39;, label=\u0026#39;Level\u0026#39;, linewidth=2) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;Severity Level\u0026#39;) plt.title(\u0026#39;Step Chart of Anomaly Severity Levels\u0026#39;) plt.grid(True, linestyle=\u0026#39;--\u0026#39;, alpha=0.5) plt.legend() plt.tight_layout() plt.show() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/7.3-savecharts/",
+	"title": "Save Charts",
+	"tags": [],
+	"description": "",
+	"content": "After creating the visual charts, the next step is to save these charts as image files for reporting, analysis, and storage purposes.\nDetails:\nUse the plt.savefig() method to save the charts in PNG format. Make sure to call plt.close() after saving to free memory and prevent overlapping when plotting new charts. Chart files should be named clearly, for example: anomaly_metrics_plot.png for the initial metrics chart. anomaly_levels_plot.png for the anomaly levels chart. anomaly_step_chart.png for the step chart of anomaly severity levels. These image files can be uploaded to AWS S3 or saved locally in the project folder depending on deployment needs. Code:\n# Save metrics chart plt.savefig(\u0026#39;anomaly_metrics_plot.png\u0026#39;) plt.close() # Save anomaly levels chart plt.savefig(\u0026#39;anomaly_levels_plot.png\u0026#39;) plt.close() # Save step chart plt.savefig(\u0026#39;anomaly_step_chart.png\u0026#39;) plt.close() "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/8.-awsanddiscordintegration/",
+	"title": "AWS and Discord Integration",
+	"tags": [],
+	"description": "",
+	"content": "Guidance on setting up and configuring AWS services like CloudWatch and S3, and integrating alerting through Discord for real-time anomaly monitoring and response.\nSubsections 8.1-ConfigureAWSClients 8.2-SetupCloudWatch 8.3-SendLogsAndAlerts "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/8.-awsanddiscordintegration/8.1-configureawsclients/",
+	"title": "Configure AWS Clients",
+	"tags": [],
+	"description": "",
+	"content": "The first step in integrating the system with AWS services is to configure AWS clients to interact with CloudWatch Logs and Amazon S3.\nMain contents:\nInitialize boto3 clients for CloudWatch Logs and S3 with parameters: region_name: AWS region (e.g., ap-southeast-1). aws_access_key_id and aws_secret_access_key: AWS access keys, ensure security. The CloudWatch Logs client is used to create log groups, log streams, and send anomaly logs. The S3 client is used to upload result files and charts to buckets. Example code:\nimport boto3 AWS_REGION = \u0026#34;ap-southeast-1\u0026#34; AWS_ACCESS_KEY_ID = \u0026#34;your_access_key\u0026#34; AWS_SECRET_ACCESS_KEY = \u0026#34;your_secret_key\u0026#34; # Access key and secret key can be found in IAM =\u0026gt; User =\u0026gt; Security credentials =\u0026gt; Access keys =\u0026gt; create access key # Initialize CloudWatch Logs client logs_client = boto3.client( \u0026#39;logs\u0026#39;, region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY ) # Initialize S3 client s3_client = boto3.client( \u0026#39;s3\u0026#39;, region_name=AWS_REGION, aws_access_key_id=AWS_ACCESS_KEY_ID, aws_secret_access_key=AWS_SECRET_ACCESS_KEY ) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/8.-awsanddiscordintegration/8.2-setupcloudwatch/",
+	"title": "CloudWatch Setup",
+	"tags": [],
+	"description": "",
+	"content": "After configuring the AWS clients, the next step is to set up CloudWatch Logs to store and manage anomaly detection logs.\nMain contents:\nCreate a Log Group if it does not exist (e.g., AnomalyDetectionLogs). Create a Log Stream within the Log Group (e.g., DemoStream). Handle exceptions when the log group or stream already exists to avoid errors. Log groups and streams help organize and manage logs by service and stream. Example code:\ndef setup_cloudwatch(logs_client, log_group_name, log_stream_name): try: logs_client.create_log_group(logGroupName=log_group_name) print(f\u0026#34;Created Log Group: {log_group_name}\u0026#34;) except logs_client.exceptions.ResourceAlreadyExistsException: print(f\u0026#34;Log Group {log_group_name} already exists.\u0026#34;) try: logs_client.create_log_stream(logGroupName=log_group_name, logStreamName=log_stream_name) print(f\u0026#34;Created Log Stream: {log_stream_name}\u0026#34;) except logs_client.exceptions.ResourceAlreadyExistsException: print(f\u0026#34;Log Stream {log_stream_name} already exists.\u0026#34;) # Usage LOG_GROUP_NAME = \u0026#34;AnomalyDetectionLogs\u0026#34; LOG_STREAM_NAME = \u0026#34;DemoStream\u0026#34; setup_cloudwatch(logs_client, LOG_GROUP_NAME, LOG_STREAM_NAME) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/8.-awsanddiscordintegration/8.3-sendlogsandalerts/",
+	"title": "Sending Logs and Alerts",
+	"tags": [],
+	"description": "",
+	"content": "After setting up CloudWatch and connecting the Discord webhook, the next step is to send anomaly logs to CloudWatch and send real-time alerts to Discord when anomalies are detected.\nSending logs to CloudWatch Logs are packaged as JSON, containing information such as timestamp, cpu_usage, anomaly_score, and level. Managing the sequenceToken of the log stream is necessary to ensure logs are sent in order. Handle conversion of special data types (e.g., numpy float, bool) to native Python types before sending. Example code for sending logs:\ndef send_log_to_cloudwatch(logs_client, log_group_name, log_stream_name, message): try: # Prepare message (convert special data types) message = message.copy() if isinstance(message.get(\u0026#39;anomaly\u0026#39;), np.bool_): message[\u0026#39;anomaly\u0026#39;] = bool(message[\u0026#39;anomaly\u0026#39;]) if isinstance(message.get(\u0026#39;anomaly_score\u0026#39;), np.floating): message[\u0026#39;anomaly_score\u0026#39;] = float(message[\u0026#39;anomaly_score\u0026#39;]) # Get latest sequenceToken streams = logs_client.describe_log_streams(logGroupName=log_group_name, logStreamNamePrefix=log_stream_name) upload_token = streams[\u0026#39;logStreams\u0026#39;][0].get(\u0026#39;uploadSequenceToken\u0026#39;, None) log_event = { \u0026#39;logGroupName\u0026#39;: log_group_name, \u0026#39;logStreamName\u0026#39;: log_stream_name, \u0026#39;logEvents\u0026#39;: [{ \u0026#39;timestamp\u0026#39;: int(time.time() * 1000), \u0026#39;message\u0026#39;: json.dumps(message) }] } if upload_token: log_event[\u0026#39;sequenceToken\u0026#39;] = upload_token response = logs_client.put_log_events(**log_event) print(\u0026#34;Log sent to CloudWatch.\u0026#34;) return response except Exception as e: print(f\u0026#34;CloudWatch log send error: {e}\u0026#34;) CloudWatch =\u0026gt; Log groups =\u0026gt; AnomalyDetectionLogs =\u0026gt; DemoStream\nSending alerts via Discord Use Discord Webhook URL.\nSend messages including time, severity level, measured value, and anomaly score.\nHandle connection errors or unsuccessful responses.\nExample code for sending alerts:\ndef send_discord_alert(webhook_url, log_data, level): try: level_names = { 1: \u0026#34;⚠️ Warning\u0026#34;, 2: \u0026#34;⚠️⚠️ Heavy Warning\u0026#34;, 3: \u0026#34;🔥 Critical\u0026#34; } severity = level_names.get(level, \u0026#34;ℹ️ Info\u0026#34;) message = ( f\u0026#34;{severity} - Anomaly Detected!\\n\u0026#34; f\u0026#34;Time: {log_data[\u0026#39;timestamp\u0026#39;]}\\n\u0026#34; f\u0026#34;CPU Usage: {log_data[\u0026#39;cpu_usage\u0026#39;]:.2f}%\\n\u0026#34; f\u0026#34;Anomaly Score: {log_data[\u0026#39;anomaly_score\u0026#39;]:.4f}\\n\u0026#34; ) response = requests.post(webhook_url, json={\u0026#34;content\u0026#34;: message}) response.raise_for_status() print(\u0026#34;Alert sent to Discord.\u0026#34;) except Exception as e: print(f\u0026#34;Discord alert send error: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/",
+	"title": "Generate Sample Data and Run Demo",
+	"tags": [],
+	"description": "",
+	"content": "This section focuses on generating simulated real-time data streams, processing and detecting anomalies on sample data, while saving and visualizing the results.\nSubsections 9.1-GenerateSampleData 9.2-ProcessSampleData 9.3-SendAlertsAndSaveResults 9.4-PlotAndSaveChartsToS3 "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.1-generatesampledata/",
+	"title": "Generating Fake Logs",
+	"tags": [],
+	"description": "",
+	"content": "To simulate real-time streaming data for demo and testing the anomaly detection system, we need to generate fake logs.\nThe fake data includes key fields such as timestamp, cpu_usage, along with auxiliary features like memory_usage and network_latency to increase realism.\nMethod to generate fake data: The cpu_usage value fluctuates randomly between 50% and 80%. There is about a 10% chance to generate spikes (high anomalies, e.g., 90-100%) or drops (sharp decreases, e.g., 10-30%) to mimic anomalies. The memory_usage and network_latency values are randomly generated but not used for the model. The timestamp increases incrementally at fixed intervals (e.g., every 1 minute). Example code to generate fake data: import random from datetime import datetime, timedelta def generate_fake_log(prev_timestamp=None): # Calculate new timestamp; if none given, use current time if prev_timestamp is None: timestamp = datetime.now() else: timestamp = prev_timestamp + timedelta(minutes=1) # Generate cpu_usage with chance of spike or drop base_cpu = random.uniform(50, 80) anomaly_chance = random.random() if anomaly_chance \u0026lt; 0.05: # 5% chance for high spike cpu_usage = random.uniform(90, 100) elif anomaly_chance \u0026lt; 0.10: # 5% chance for low drop cpu_usage = random.uniform(10, 30) else: cpu_usage = base_cpu # Generate auxiliary metrics memory_usage = random.uniform(40, 90) network_latency = random.uniform(10, 50) log_entry = { \u0026#34;timestamp\u0026#34;: timestamp.strftime(\u0026#34;%Y-%m-%d %H:%M:%S\u0026#34;), \u0026#34;cpu_usage\u0026#34;: cpu_usage, \u0026#34;memory_usage\u0026#34;: memory_usage, \u0026#34;network_latency\u0026#34;: network_latency, } return log_entry, timestamp "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.2-processsampledata/",
+	"title": "Processing Sample Data",
+	"tags": [],
+	"description": "",
+	"content": "After generating fake logs, the next step is to process this data to prepare for anomaly detection.\nSteps to process sample data: Feature engineering similar to the real data:\nRolling Mean: Moving average of cpu_usage over a window of 3 data points. Rolling Standard Deviation: Moving standard deviation over a window of 3 data points. Difference: Difference between the current and previous value. Normalization:\nUse a pre-trained scaler (e.g., StandardScaler) to normalize features to ensure stable model performance. Anomaly prediction:\nApply the trained Isolation Forest model to compute anomaly scores and classify whether each data point is anomalous or normal. Severity level classification based on anomaly scores with predefined dynamic thresholds.\nExample code to process a batch of sample data: import pandas as pd def process_sample_data(sample_logs, scaler, model): # Convert list of dicts to DataFrame df = pd.DataFrame(sample_logs) # Convert timestamp to datetime df[\u0026#39;timestamp\u0026#39;] = pd.to_datetime(df[\u0026#39;timestamp\u0026#39;]) # Calculate rolling features df[\u0026#39;rolling_mean\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].rolling(window=3, min_periods=1).mean() df[\u0026#39;rolling_std\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].rolling(window=3, min_periods=1).std().fillna(0) df[\u0026#39;diff\u0026#39;] = df[\u0026#39;cpu_usage\u0026#39;].diff().fillna(0) # Normalize features features = scaler.transform(df[[\u0026#39;cpu_usage\u0026#39;, \u0026#39;rolling_mean\u0026#39;, \u0026#39;rolling_std\u0026#39;, \u0026#39;diff\u0026#39;]]) # Predict anomalies anomaly_scores = model.decision_function(features) predictions = model.predict(features) # -1 for anomaly, 1 for normal df[\u0026#39;anomaly_score\u0026#39;] = anomaly_scores df[\u0026#39;anomaly\u0026#39;] = predictions == -1 # Classify severity level based on thresholds (pass thresholds as argument or define before) def classify_level(score, thresholds): if score \u0026lt; thresholds[\u0026#39;critical\u0026#39;]: return \u0026#39;critical\u0026#39; elif score \u0026lt; thresholds[\u0026#39;heavy_warning\u0026#39;]: return \u0026#39;heavy warning\u0026#39; elif score \u0026lt; thresholds[\u0026#39;warning\u0026#39;]: return \u0026#39;warning\u0026#39; else: return \u0026#39;normal\u0026#39; # Example thresholds dict with keys: \u0026#39;critical\u0026#39;, \u0026#39;heavy_warning\u0026#39;, \u0026#39;warning\u0026#39; thresholds = { \u0026#39;critical\u0026#39;: -0.15, \u0026#39;heavy_warning\u0026#39;: -0.12, \u0026#39;warning\u0026#39;: -0.1 } df[\u0026#39;level\u0026#39;] = df[\u0026#39;anomaly_score\u0026#39;].apply(lambda x: classify_level(x, thresholds)) return df "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.3-sendalertsandsaveresults/",
+	"title": "Sending Alerts and Saving Results",
+	"tags": [],
+	"description": "",
+	"content": "After processing sample data and predicting anomalies, the next step is to send alerts to monitoring systems and save results into storage for analysis and tracking.\nSteps to perform: Send alerts via Discord\nUse the webhook URL to send notifications directly to a Discord channel when an anomaly with severity level warning or higher is detected. The alert includes time, CPU usage, anomaly score, and severity level.\nSend logs to AWS CloudWatch\nSend detailed logs of anomaly points (timestamp, CPU usage, anomaly score, level) to CloudWatch Logs for monitoring and traceability.\nSave results to Amazon S3\nExport prediction results as CSV files and upload them to the configured S3 bucket. Also save visualization charts for reporting and analysis.\nExample code: import requests import boto3 import json import io import pandas as pd def send_discord_alert(webhook_url, log_data, level): level_names = { \u0026#39;warning\u0026#39;: \u0026#34;⚠️ Warning\u0026#34;, \u0026#39;heavy warning\u0026#39;: \u0026#34;⚠️⚠️ Heavy Warning\u0026#34;, \u0026#39;critical\u0026#39;: \u0026#34;🔥 Critical\u0026#34; } severity = level_names.get(level, \u0026#34;ℹ️ Info\u0026#34;) message = ( f\u0026#34;{severity} - Anomaly detected!\\n\u0026#34; f\u0026#34;Time: {log_data[\u0026#39;timestamp\u0026#39;]}\\n\u0026#34; f\u0026#34;CPU Usage: {log_data[\u0026#39;cpu_usage\u0026#39;]:.2f}%\\n\u0026#34; f\u0026#34;Anomaly Score: {log_data[\u0026#39;anomaly_score\u0026#39;]:.4f}\\n\u0026#34; ) try: response = requests.post(webhook_url, json={\u0026#34;content\u0026#34;: message}) response.raise_for_status() print(\u0026#34;Discord alert sent.\u0026#34;) except Exception as e: print(f\u0026#34;Error sending Discord alert: {e}\u0026#34;) def send_log_to_cloudwatch(client, log_group, log_stream, message): try: streams = client.describe_log_streams(logGroupName=log_group, logStreamNamePrefix=log_stream) upload_token = streams[\u0026#39;logStreams\u0026#39;][0].get(\u0026#39;uploadSequenceToken\u0026#39;, None) log_event = { \u0026#39;logGroupName\u0026#39;: log_group, \u0026#39;logStreamName\u0026#39;: log_stream, \u0026#39;logEvents\u0026#39;: [ { \u0026#39;timestamp\u0026#39;: int(pd.Timestamp.now().timestamp() * 1000), \u0026#39;message\u0026#39;: json.dumps(message) } ] } if upload_token: log_event[\u0026#39;sequenceToken\u0026#39;] = upload_token response = client.put_log_events(**log_event) print(\u0026#34;Log sent to CloudWatch.\u0026#34;) except Exception as e: print(f\u0026#34;Error sending log to CloudWatch: {e}\u0026#34;) def save_results_to_s3(s3_client, bucket_name, df_results, filename_csv, filename_plot, plot_path): try: csv_buffer = io.StringIO() df_results.to_csv(csv_buffer, index=False) s3_client.put_object(Bucket=bucket_name, Key=filename_csv, Body=csv_buffer.getvalue()) print(f\u0026#34;CSV results saved to s3://{bucket_name}/{filename_csv}\u0026#34;) with open(plot_path, \u0026#34;rb\u0026#34;) as f: s3_client.put_object(Bucket=bucket_name, Key=filename_plot, Body=f.read()) print(f\u0026#34;Plot saved to s3://{bucket_name}/{filename_plot}\u0026#34;) except Exception as e: print(f\u0026#34;Error saving results to S3: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/9.-generatesampledataandrundemo/9.4-plotandsavechartstos3/",
+	"title": "Plot and Save Charts to S3",
+	"tags": [],
+	"description": "",
+	"content": "After processing the sample data and predicting anomalies, visualizing the results through charts helps operators analyze and make informed decisions.\nSteps: Plot CPU Utilization with anomaly points marked\nUse matplotlib to create a chart showing CPU Utilization over time, marking anomaly points with colors according to severity levels (warning, heavy warning, critical).\nSave the chart as a PNG image file\nSave the plot to a temporary PNG file locally before uploading.\nUpload the chart file to Amazon S3\nUse boto3 client to upload the chart file to the configured S3 bucket for easy storage and sharing.\nSample code: import matplotlib.pyplot as plt import boto3 def plot_anomaly_chart(df, output_path): plt.figure(figsize=(12,6)) plt.plot(df[\u0026#39;timestamp\u0026#39;], df[\u0026#39;cpu_usage\u0026#39;], label=\u0026#39;CPU Utilization\u0026#39;, color=\u0026#39;blue\u0026#39;) colors = { \u0026#39;warning\u0026#39;: \u0026#39;orange\u0026#39;, \u0026#39;heavy warning\u0026#39;: \u0026#39;red\u0026#39;, \u0026#39;critical\u0026#39;: \u0026#39;purple\u0026#39; } for level, color in colors.items(): subset = df[df[\u0026#39;level\u0026#39;] == level] plt.scatter(subset[\u0026#39;timestamp\u0026#39;], subset[\u0026#39;cpu_usage\u0026#39;], color=color, label=level.capitalize()) plt.xlabel(\u0026#39;Timestamp\u0026#39;) plt.ylabel(\u0026#39;CPU Utilization (%)\u0026#39;) plt.title(\u0026#39;CPU Utilization with Anomaly Detection\u0026#39;) plt.legend() plt.tight_layout() plt.savefig(output_path) plt.close() print(f\u0026#34;Chart saved at {output_path}\u0026#34;) def upload_chart_to_s3(s3_client, bucket_name, file_path, s3_key): try: with open(file_path, \u0026#39;rb\u0026#39;) as f: s3_client.put_object(Bucket=bucket_name, Key=s3_key, Body=f) print(f\u0026#34;Chart uploaded to s3://{bucket_name}/{s3_key}\u0026#34;) except Exception as e: print(f\u0026#34;Error uploading chart to S3: {e}\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/10.-rundemoandvalidation/",
+	"title": "Run Demo and Validation",
+	"tags": [],
+	"description": "",
+	"content": "This section guides you through executing the full anomaly detection demo pipeline, as well as checking and validating the results and related logs to ensure correct system operation.\nSubsections 10.1-ExecuteRunDemo 10.2-CheckResultsAndLogs "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/10.-rundemoandvalidation/10.1-executerundemo/",
+	"title": "Run Demo Execution",
+	"tags": [],
+	"description": "",
+	"content": "In this section, you will execute the run_demo() function to generate simulated sample data, perform anomaly detection predictions, send alerts, and save results to AWS S3 and CloudWatch.\nObjectives Generate continuous fake log data to simulate real-time data flow. Apply the trained Isolation Forest model to predict anomaly points. Send anomaly logs to CloudWatch and real-time alerts via Discord. Save anomaly detection results and charts to S3 for easy monitoring. Instructions Make sure you have completed library installation, connected Google Drive, and loaded the model and scaler.\nRun the function run_demo(num_logs=25) to create 25 fake log entries and perform anomaly detection.\nMonitor console output to check alert information and log sending status.\nCheck AWS S3 for the uploaded file anomaly_results.csv and charts.\nCheck CloudWatch Logs for anomaly logs.\nCheck Discord for real-time alerts if anomalies are detected.\nExample code: if __name__ == \u0026#34;__main__\u0026#34;: results_df = run_demo(num_logs=25) print(\u0026#34;Demo finished, data saved and alerts sent.\u0026#34;) "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/10.-rundemoandvalidation/10.2-checkresultsandlogs/",
+	"title": "Check Results and Logs",
+	"tags": [],
+	"description": "",
+	"content": "After running the demo function, the next step is to verify the anomaly detection results and logs sent to AWS as well as alerts via Discord.\nSteps to check: Check result files on S3\nLog in to AWS Console, navigate to Amazon S3 service. Open the configured bucket (e.g., anomaly12). Locate the file anomaly_results.csv to view anomaly detection data including timestamp, cpu_usage, anomaly_score, and level. Find the chart file anomaly_levels_plot.png to visually inspect anomaly points. Check logs on CloudWatch Logs\nOpen AWS CloudWatch on Console. Select Logs → Log groups → AnomalyDetectionLogs. Open DemoStream to see logs sent during the demo run. Look for logs with anomaly=true or unusually low anomaly_score. Check alerts on Discord\nOpen the Discord channel linked with the webhook. Review real-time alert messages showing severity (warning, heavy warning, critical), timestamp, and anomaly_score. If no alerts appear, it may mean no anomalies detected or webhook sending error. Check console output during run\nMonitor printed messages in the console while running run_demo() to ensure no errors in sending logs or alerts. Tips: If no data or logs appear on AWS, verify AWS credentials, region, bucket name, log group, and log stream configuration. Ensure Discord webhook URL is correct and active. Increase number of fake logs (num_logs) to generate more data in demo runs. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/11.-cleanupresources/",
+	"title": "Cleanup Resources",
+	"tags": [],
+	"description": "",
+	"content": "The final section guides you on how to delete AWS resources created during the workshop to avoid unwanted costs, as well as disconnect Google Drive if it was used.\nSubsections 11.1-DeleteAWSResources 11.2-DisconnectGoogleDrive "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/11.-cleanupresources/11.1-deleteawsresources/",
+	"title": "Deleting AWS Resources",
+	"tags": [],
+	"description": "",
+	"content": "After completing the workshop or when no longer in use, it is important to delete AWS resources to avoid unwanted costs.\nResources to delete: Amazon CloudWatch Logs\nLog group: AnomalyDetectionLogs Log stream: DemoStream Amazon S3 Bucket\nBucket: anomaly12 (or your configured bucket name) Steps to delete resources: Delete log stream and log group on CloudWatch\nGo to AWS Management Console → CloudWatch → Logs. Select Log groups → select AnomalyDetectionLogs. Inside AnomalyDetectionLogs, select DemoStream → Delete log stream. Return to AnomalyDetectionLogs → Delete log group. Delete bucket and contents on S3\nGo to AWS Management Console → S3. Find the bucket anomaly12. Delete all files inside the bucket. Then delete the bucket itself. Important notes Make sure you have backed up any necessary data before deleting. Deleting an S3 bucket may take a few minutes if it contains many objects. If you encounter errors deleting the bucket, check if versioning is enabled. You need to disable versioning or delete all versions first. "
+},
+{
+	"uri": "http://localhost:1313/workshopaws/11.-cleanupresources/11.2-disconnectgoogledrive/",
+	"title": "Disconnect Google Drive",
+	"tags": [],
+	"description": "",
+	"content": "After completing the workshop or when no longer needed, disconnecting Google Drive in the Google Colab environment helps secure your data and revoke access permissions.\nSteps to disconnect Google Drive in Google Colab: In your Google Colab notebook, run the command: from google.colab import drive drive.flush_and_unmount() Or directly click the Disconnect button at the top-right corner of the Google Colab interface, next to the runtime name.\nConfirm to disconnect.\nNote:\nDisconnecting Google Drive will NOT delete any data on your Drive; it only revokes access from the current session.\nIf you want to continue using data from Drive, you need to mount Drive again at the beginning of a new session.\nCongratulations! You have successfully completed the workshop! Congratulations on overcoming the challenges and mastering anomaly detection techniques with Machine Learning.\nWishing you continued success on your learning and career journey!\nIf you find any errors or issues in this workshop, please kindly send an email to kimirokishoyu@gmail.com so I can update the content promptly ^^. Once again, thank you all for practicing this lab and wishing you good health!\nThis lab was originally written in Vietnamese and then translated into English, so please kindly forgive any mistakes or inaccuracies.\nBest regards,\nZen\n"
+},
+{
+	"uri": "http://localhost:1313/workshopaws/categories/",
+	"title": "Categories",
+	"tags": [],
+	"description": "",
+	"content": ""
+},
+{
+	"uri": "http://localhost:1313/workshopaws/tags/",
+	"title": "Tags",
+	"tags": [],
+	"description": "",
+	"content": ""
+}]

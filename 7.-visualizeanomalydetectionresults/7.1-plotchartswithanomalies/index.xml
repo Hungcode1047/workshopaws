@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Anomaly Visualization Plot on Deploy Hugo Website with AWS CI/CD Tools</title>
+    <link>http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/7.1-plotchartswithanomalies/</link>
+    <description>Recent content in Anomaly Visualization Plot on Deploy Hugo Website with AWS CI/CD Tools</description>
+    <generator>Hugo</generator>
+    <language>en</language>
+    <atom:link href="http://localhost:1313/workshopaws/7.-visualizeanomalydetectionresults/7.1-plotchartswithanomalies/index.xml" rel="self" type="application/rss+xml" />
+  </channel>
+</rss>
